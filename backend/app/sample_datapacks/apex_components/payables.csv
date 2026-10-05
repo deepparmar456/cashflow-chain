@@ -1,0 +1,6 @@
+payable_id,supplier_name,amount,due_date,lead_time_days
+PINV-9921,Supplier X (Precision Polymer & Silicon),1200000,2026-10-14,14
+PINV-9922,Shakti Industrial Metals,550000,2026-10-10,10
+PINV-9923,Omkar Packaging Solutions,280000,2026-10-18,5
+PINV-9924,SpeedLink Freight & Cargo,340000,2026-10-22,3
+PINV-9925,Vanguard Microelectronics,820000,2026-10-28,25

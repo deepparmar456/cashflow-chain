@@ -1,0 +1,7 @@
+invoice_id,customer_name,amount,due_date,status,settled_date,delay_days
+INV-2026-058,ABC Industries,1800000,2026-06-05,PAID,2026-06-11,6
+INV-2026-074,ABC Industries,1950000,2026-07-10,PAID,2026-07-21,11
+INV-2026-089,ABC Industries,2100000,2026-08-15,PAID,2026-08-31,16
+INV-2026-0891,ABC Industries,2400000,2026-10-08,OPEN,,
+INV-2026-102,Zenith Dynamics,420000,2026-10-14,OPEN,,
+INV-2026-105,Bharat Forge Tier-2,320000,2026-10-22,OPEN,,

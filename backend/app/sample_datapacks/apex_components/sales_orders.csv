@@ -1,0 +1,3 @@
+order_id,customer_name,sku_id,units,unit_price,delivery_due_date
+SO-4021,Zenith Dynamics,SKU-IND-904,80,25833.3333,2026-10-20
+SO-4029,Apex Infra Logistics,SKU-IND-904,40,25833.3333,2026-10-24

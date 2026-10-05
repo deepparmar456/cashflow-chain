@@ -1,0 +1,3 @@
+order_id,customer_name,sku_id,units,unit_price,delivery_due_date
+SO-Z-8801,Global Energy Systems,SKU-ZEN-401,60,25000,2026-10-22
+SO-Z-8802,National Infrastructure Corp,SKU-ZEN-401,40,25000,2026-10-26

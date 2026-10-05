@@ -1,0 +1,5 @@
+payable_id,supplier_name,amount,due_date,lead_time_days
+PINV-Z-801,Precision Alloys Forge Ltd,1000000,2026-10-15,14
+PINV-Z-802,Sterling CNC Fasteners,320000,2026-10-12,7
+PINV-Z-803,Zenith Corrugated Packaging,180000,2026-10-19,4
+PINV-Z-804,SuperClean Industrial Solvents,220000,2026-10-25,6

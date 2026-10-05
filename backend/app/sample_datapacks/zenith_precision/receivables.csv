@@ -1,0 +1,7 @@
+invoice_id,customer_name,amount,due_date,status,settled_date,delay_days
+INV-Z-011,Titan Heavy Industries,1200000,2026-06-10,PAID,2026-06-15,5
+INV-Z-022,Titan Heavy Industries,1400000,2026-07-15,PAID,2026-07-25,10
+INV-Z-033,Titan Heavy Industries,1600000,2026-08-20,PAID,2026-09-04,15
+INV-Z-1001,Titan Heavy Industries,1800000,2026-10-09,OPEN,,
+INV-Z-1002,Kalyani Steels Ltd,520000,2026-10-16,OPEN,,
+INV-Z-1003,Thermax Power Aux,380000,2026-10-24,OPEN,,

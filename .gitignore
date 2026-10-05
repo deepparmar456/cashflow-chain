@@ -1,0 +1,26 @@
+# Node dependencies
+node_modules/
+frontend/node_modules/
+
+# Python virtual environment
+.venv/
+backend/.venv/
+env/
+venv/
+
+# Python compiled bytecode
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.pytest_cache/
+
+# Local binaries and tunnel tools
+cloudflared.exe
+*.exe
+
+# System & IDE files
+.DS_Store
+Thumbs.db
+*.tmp
+.system_generated/
