@@ -25,6 +25,17 @@ Thumbs.db
 *.tmp
 .system_generated/
 
-# Local submission artifacts excluded from remote repo
+# Local submission artifacts & helper scripts (excluded from remote GitHub repo)
+screenshots/
 CashFlow_Chain.zip
+CashFlow_Chain_Pitch_Deck.pptx
 PROJECT_REPORT.html
+PROJECT_REPORT.md
+CASHFLOW_CHAIN_ROADMAP.md
+DEPLOYMENT_GUIDE.md
+create_clean_zip.py
+generate_deck.py
+generate_report_html.py
+push_to_github.bat
+run_all.bat
+run_all.ps1
