@@ -29,7 +29,19 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-engine = FinancialEngine()
+default_engine = FinancialEngine()
+session_engines: Dict[str, FinancialEngine] = {}
+
+
+def get_active_engine(request: Request) -> FinancialEngine:
+    """
+    Returns a session-isolated FinancialEngine if the client has uploaded a custom data pack,
+    or the canonical ABC Industries benchmark engine by default.
+    Guarantees that one judge uploading custom data never overwrites another judge's session.
+    """
+    session_id = request.headers.get("X-Session-Id", "default_session")
+    return session_engines.get(session_id, default_engine)
+
 
 SAMPLE_DATAPACKS_DIR = Path(__file__).resolve().parent / "sample_datapacks"
 
@@ -58,37 +70,47 @@ def root():
 
 
 @app.get("/health")
-def health_check():
+def health_check(request: Request):
+    eng = get_active_engine(request)
     return {
         "status": "HEALTHY",
         "system": "CashFlow Chain Backend Engine",
         "version": "1.0.0",
-        "company_name": engine.company_name,
-        "mode": engine.mode,
+        "company_name": eng.company_name,
+        "mode": eng.mode,
         "frontend_served": FRONTEND_DIST.exists()
     }
 
 
 @app.get("/api/datapack/status")
-def get_datapack_status():
+def get_datapack_status(request: Request):
+    eng = get_active_engine(request)
     return {
-        "company_name": engine.company_name,
-        "mode": engine.mode,
-        "is_custom": engine.is_custom,
+        "company_name": eng.company_name,
+        "mode": eng.mode,
+        "is_custom": eng.is_custom,
         "benchmark_company": "ABC Industries"
     }
 
 
 @app.post("/api/upload-datapack")
-async def upload_datapack_json(payload: DataPackJsonPayload):
-    result = engine.ingest_datapack(payload.files)
+async def upload_datapack_json(payload: DataPackJsonPayload, request: Request):
+    session_id = request.headers.get("X-Session-Id", "default_session")
+    if session_id not in session_engines:
+        session_engines[session_id] = FinancialEngine()
+    eng = session_engines[session_id]
+    result = eng.ingest_datapack(payload.files)
     if not result.get("success"):
         return JSONResponse(status_code=400, content=result)
     return result
 
 
 @app.post("/api/upload-datapack-files")
-async def upload_datapack_files(files: List[UploadFile] = File(...)):
+async def upload_datapack_files(request: Request, files: List[UploadFile] = File(...)):
+    session_id = request.headers.get("X-Session-Id", "default_session")
+    if session_id not in session_engines:
+        session_engines[session_id] = FinancialEngine()
+    eng = session_engines[session_id]
     files_dict: Dict[str, str] = {}
     for f in files:
         content_bytes = await f.read()
@@ -96,15 +118,18 @@ async def upload_datapack_files(files: List[UploadFile] = File(...)):
             files_dict[f.filename] = content_bytes.decode("utf-8")
         except UnicodeDecodeError:
             files_dict[f.filename] = content_bytes.decode("latin-1")
-    result = engine.ingest_datapack(files_dict)
+    result = eng.ingest_datapack(files_dict)
     if not result.get("success"):
         return JSONResponse(status_code=400, content=result)
     return result
 
 
 @app.post("/api/reset-benchmark")
-def reset_benchmark():
-    return engine.reset_benchmark()
+def reset_benchmark(request: Request):
+    session_id = request.headers.get("X-Session-Id", "default_session")
+    if session_id in session_engines:
+        del session_engines[session_id]
+    return default_engine.reset_benchmark()
 
 
 @app.get("/api/download-datapack/{pack_name}")
@@ -122,54 +147,64 @@ def download_sample_datapack(pack_name: str):
 
 
 @app.get("/api/metrics")
-def get_metrics(intervention: Optional[str] = Query("NONE")):
-    return engine.get_metrics(active_intervention=intervention.upper())
+def get_metrics(request: Request, intervention: Optional[str] = Query("NONE")):
+    eng = get_active_engine(request)
+    return eng.get_metrics(active_intervention=intervention.upper())
 
 
 @app.get("/api/timeline")
-def get_timeline(intervention: Optional[str] = Query("NONE")):
-    return engine.get_cash_timeline(active_intervention=intervention.upper())
+def get_timeline(request: Request, intervention: Optional[str] = Query("NONE")):
+    eng = get_active_engine(request)
+    return eng.get_cash_timeline(active_intervention=intervention.upper())
 
 
 @app.get("/api/customer-risk")
-def get_customer_risk():
-    return engine.get_customer_risk_profile()
+def get_customer_risk(request: Request):
+    eng = get_active_engine(request)
+    return eng.get_customer_risk_profile()
 
 
 @app.get("/api/impact-chain")
-def get_impact_chain(intervention: Optional[str] = Query("NONE")):
-    return engine.get_impact_chain_graph(active_intervention=intervention.upper())
+def get_impact_chain(request: Request, intervention: Optional[str] = Query("NONE")):
+    eng = get_active_engine(request)
+    return eng.get_impact_chain_graph(active_intervention=intervention.upper())
 
 
 @app.get("/api/interventions")
-def get_interventions():
-    return engine.get_interventions()
+def get_interventions(request: Request):
+    eng = get_active_engine(request)
+    return eng.get_interventions()
 
 
 @app.get("/api/executive-explanation")
 @app.get("/api/executive-memo")
-def get_executive_explanation(intervention: Optional[str] = Query("NONE")):
-    return engine.get_executive_explanation(active_intervention=intervention.upper())
+def get_executive_explanation(request: Request, intervention: Optional[str] = Query("NONE")):
+    eng = get_active_engine(request)
+    return eng.get_executive_explanation(active_intervention=intervention.upper())
 
 
 @app.get("/api/customers")
-def get_customers():
-    return {"total": len(engine.data["customers"]), "customers": engine.data["customers"]}
+def get_customers(request: Request):
+    eng = get_active_engine(request)
+    return {"total": len(eng.data["customers"]), "customers": eng.data["customers"]}
 
 
 @app.get("/api/suppliers")
-def get_suppliers():
-    return {"total": len(engine.data["suppliers"]), "suppliers": engine.data["suppliers"]}
+def get_suppliers(request: Request):
+    eng = get_active_engine(request)
+    return {"total": len(eng.data["suppliers"]), "suppliers": eng.data["suppliers"]}
 
 
 @app.get("/api/invoices")
-def get_invoices():
-    return {"total": len(engine.data["invoices"]), "invoices": engine.data["invoices"]}
+def get_invoices(request: Request):
+    eng = get_active_engine(request)
+    return {"total": len(eng.data["invoices"]), "invoices": eng.data["invoices"]}
 
 
 @app.get("/api/sku-details")
-def get_sku_details():
+def get_sku_details(request: Request):
+    eng = get_active_engine(request)
     return {
-        "sku": engine.data["sku"],
-        "sales_orders_at_risk": engine.data["sales_orders_at_risk"]
+        "sku": eng.data["sku"],
+        "sales_orders_at_risk": eng.data["sales_orders_at_risk"]
     }

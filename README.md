@@ -19,9 +19,9 @@ Most SME financial accounting software (Zoho, QuickBooks, Tally) is **rearward-l
 | # | Screen | Purpose | Key Metrics / Highlights |
 |---|---|---|---|
 | **1** | **Command Center** | Macro Financial Health & Immediate Threat Radar | • Cash Position: **₹42.6L**<br>• 30-Day Min Cash: **₹21.2L** (Baseline) / **₹6.6L** (Stress Breach)<br>• Receivables at Risk: **₹31.4L**<br>• Revenue Exposure: **₹31.0L**<br>• Prominent Alert: *"CASHFLOW CHAIN DETECTED: ABC Industries — predicted 21-day delay"*<br>• 30-day interactive cash trajectory curve (Recharts) |
-| **2** | **Customer Risk** | Root-Cause Diagnostic on Focal Account | • Customer: **ABC Industries**<br>• Scheduled Inflow: **₹24.0L** (Due 08-Oct-2026)<br>• Predicted Delay: **+21 Days** (Arrival 29-Oct-2026)<br>• Model Confidence: **87%**<br>• 4 Causal Signals: Escalating delays, concentration fragility, payment friction, liquidity dependence |
+| **2** | **Customer Risk** | Root-Cause Diagnostic on Focal Account | • Customer: **ABC Industries**<br>• Scheduled Inflow: **₹24.0L** (Due 08-Oct-2026)<br>• Expected Payment Delay: **+21 Days** (Arrival 29-Oct-2026)<br>• Risk Confidence: **87%** (Based on a clear upward payment-delay trend across the last 3 settled invoices)<br>• 4 Warning Signs: Escalating delays, concentration fragility, payment friction, liquidity dependence |
 | **3** | **Impact Chain** *(Hero)* | Interactive 6-Hop Dependency Graph | **Interactive React Flow Canvas:**<br>`[ABC Industries Delay: ₹24L]` $\rightarrow$ `[Cash Buffer Drops to ₹6.6L]` $\rightarrow$ `[Supplier X Payment At Risk: ₹12L]` $\rightarrow$ `[PO-8841 Raw Material Frozen]` $\rightarrow$ `[Inventory: 12-day stockout]` $\rightarrow$ `[Revenue Exposure: ₹31.0L]`<br>• **Clickable Nodes:** Click any node to open the mathematical derivation and ledger transaction drawer. |
-| **4** | **Intervention Simulator** | Algorithmic Countermeasure Engine | • **Option A: Early Payment Incentive** (Cost: **₹48K**, Protects: **₹31L**, 100%) $\rightarrow$ **RECOMMENDED ACTION**<br>• **Option B: Supplier Payment Rescheduling** (Cost: **₹0**, Protects: **₹18L**, Leaves ₹13L exposed)<br>• **Option C: Short-Term Invoice Financing** (Cost: **₹1.10L**, Protects: **₹31L**, 100%)<br>• **Live Recalculation:** Selecting an option flips the graph nodes to green, restores cash above ₹15L, and displays net financial gain. |
+| **4** | **Intervention Simulator** | Algorithmic Countermeasure Engine | • **Option A: Early Payment Incentive** (Cost: **₹48K**, Protects: **₹31L**, 100% in this scenario) $\rightarrow$ **RECOMMENDED ACTION**<br>• **Option B: Supplier Payment Rescheduling** (Cost: **₹0**, Protects: **₹18L**, Leaves ₹13L exposed)<br>• **Option C: Short-Term Invoice Financing** (Cost: **₹1.10L**, Protects: **₹31L**, 100% in this scenario)<br>• **Live Recalculation:** Selecting an option flips the graph nodes to green, restores cash above ₹15L, and displays **₹30.52L net value protected**. |
 | **5** | **AI Executive Memo** | Institutional C-Suite Decision Briefing | Structured as **Evidence $\rightarrow$ Impact $\rightarrow$ Action** with one-click clipboard copy and export. Backed 100% by deterministic calculations (zero numerical hallucinations). |
 
 ---
@@ -44,18 +44,18 @@ $$\text{Assembly Line Outage} = 30 - 18 = \mathbf{12 \text{ consecutive days of 
 
 ### C. Revenue Exposure (SKU & Order Level)
 - Production SKU: **SKU-IND-904** (Industrial 50kW Modular Inverters)
-- Lost Volume: 12 days $\times$ 10 units/day = **120 units**
+- Unproduced Volume: 12 days $\times$ 10 units/day = **120 units**
 - Impacted Committed Orders:
   - **Order #SO-4021 (Zenith Dynamics):** 80 units @ ₹25,833.33 = **₹20,66,666**
   - **Order #SO-4029 (Apex Infra Logistics):** 40 units @ ₹25,833.33 = **₹10,33,334**
-  - **Total Revenue at Risk:** $80 \times 25,833.33 + 40 \times 25,833.33 = \mathbf{₹31,00,000 \text{ (₹31.0L)}}$
+  - **Total Revenue Exposed:** $80 \times 25,833.33 + 40 \times 25,833.33 = \mathbf{₹31,00,000 \text{ (₹31.0L)}}$
 
 ### D. Constrained Cost-Minimization Objective
 Rather than a vague black box, the recommendation engine solves:
 $$\min_{a \in \{A, B, C\}} \text{Cost}(a) \quad \text{subject to} \quad \frac{\text{ExposureProtected}(a)}{\text{TotalExposure}} = 1.0$$
-- **Option A (₹48,000)** is the unique mathematical minimizer providing 100% coverage, saving **₹30.52L net** (64.6x ROI).
+- **Option A (₹48,000)** is the unique mathematical minimizer providing 100% protection in this scenario, delivering **₹30.52L net value protected** (`₹31.0L - ₹0.48L`).
 - **Option B (₹0)** is **infeasible** under full protection (only 58.1% coverage, leaves ₹13L exposed).
-- **Option C (₹1,10,000)** satisfies full protection but is strictly dominated by Option A ($2.29\times$ higher cost).
+- **Option C (₹1,10,000)** satisfies full protection in this scenario (`₹29.90L net value protected`) but is strictly dominated by Option A ($2.29\times$ higher cost).
 
 ---
 
@@ -103,28 +103,20 @@ npm.cmd run dev
 
 ---
 
-## 5. Hackathon Pitch Script (3-Minute Flow)
+## 5. Hackathon Pitch Script (60–90 Second Guided Demo Flow)
 
-Use the built-in **Floating Demo Stepper** at the bottom of the screen to present:
+Use the built-in **5-Step Guided Demo (`01 Predict → 02 Trace → 03 Compare → 04 Prevent → 05 Verdict`)**:
 
-1. **Step 1 & 2: Command Center**  
-   *"Look at our company right now. We have ₹42.6L in cash and our 30-day baseline min is healthy at ₹21.2L. Any traditional accounting tool would say we are completely fine."*
-2. **Step 3: The Early-Warning Alert**  
-   *"But our early-warning engine detects a CASHFLOW CHAIN. ABC Industries is predicted to delay their ₹24L payment by 21 days."*  
-   *Click: **TRACE IMPACT**.*
-3. **Step 4 & 5: Customer Risk Diagnostic**  
-   *"Here is why our engine caught this: ABC's past 3 invoices showed delays climbing from 4 to 11 to 18 days. We predict with 87% confidence they will pay on Oct 29, not Oct 8."*  
-   *Click: **SIMULATE CASCADE**.*
-4. **Step 6 & 7: The Impact Chain (Hero)**  
-   *"Watch the chain reaction. ABC's delay leaves us with only ₹6.6L on Oct 14—below our ₹15L safety threshold. We cannot safely pay Supplier X ₹12L. Supplier X halts raw material resin dispatch. Our 18-day factory buffer runs out in 18 days, leaving a 12-day assembly outage. That cancels 120 units across two customer contracts, exposing ₹31 Lakhs in revenue!"*  
-   *Click any node to show judges the exact ledger math drawer.*
-5. **Step 8 & 9: Intervention Simulator**  
-   *"Now, how do we fix this? Our optimization engine models 3 interventions. Option B costs ₹0, but only saves ₹18L and leaves ₹13L exposed. Option C costs ₹1.1L. But Option A—a 2% prompt discount costing ₹48,000—accelerates cash by 48 hours and 100% protects all ₹31 Lakhs."*  
-   *Click: **Apply Option A**.*
-6. **Step 10: Cascade Prevention**  
-   *"Watch the graph: All 6 nodes turn emerald green. Cash recovers to ₹23.8L. The net financial gain is ₹30.52 Lakhs on a ₹48K spend."*
-7. **Step 11: C-Suite Executive Briefing**  
-   *"Finally, the system generates an audit-ready, institutional C-Suite memo in Evidence $\rightarrow$ Impact $\rightarrow$ Action format ready for Treasury execution."*
+1. **01 Predict**  
+   *"ABC Industries may receive a ₹24L payment 21 days late. Based on a clear upward payment-delay trend across the last 3 settled invoices (6d → 11d → 16d), our system flags a projected +21-day delay with 87% Risk Confidence."*
+2. **02 Trace**  
+   *"Watch what happens next: ABC's delay drops our cash to ₹6.6L on Oct 14—below our ₹15L safe limit. We cannot pay Supplier X ₹12L. Supplier X holds 300kg of raw material. Our 18-day buffer runs out, causing a 12-day stockout and exposing ₹31 Lakhs of customer orders."*
+3. **03 Compare**  
+   *"How should ABC respond? Option B costs ₹0, but only protects ₹18L and leaves ₹13L exposed. Option C costs ₹1.10L. Option A—a 2% early payment discount costing ₹48,000—accelerates cash to Oct 10 and protects 100% of exposed orders in this scenario."*
+4. **04 Prevent**  
+   *"When we apply Option A, all 6 nodes turn green. A ₹48,000 action protects ₹31L of exposed orders."*
+5. **05 Verdict**  
+   *"The outcome: ₹30.52 Lakhs in net value protected (`₹31L - ₹48K`), with 100% of exposed orders protected in this scenario."*
 
 ---
 

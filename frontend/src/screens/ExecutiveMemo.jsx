@@ -228,8 +228,8 @@ KEY NUMBERS:
               <span className="text-sm font-bold text-emerald-800 mt-0.5 block">{incentiveCost}</span>
             </div>
             <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200 sm:col-span-2">
-              <span className="text-emerald-700 block font-sans">Revenue Protected (Net Gain, 64.6x ROI)</span>
-              <span className="text-sm font-bold text-emerald-800 mt-0.5 block">{netSavedValue}</span>
+              <span className="text-emerald-700 block font-sans">Net Value Protected (100% protected in this scenario)</span>
+              <span className="text-sm font-bold text-emerald-800 mt-0.5 block">{netSavedValue} net value protected</span>
             </div>
           </div>
         </div>

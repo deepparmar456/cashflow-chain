@@ -541,8 +541,8 @@ export default function LoadCompanyDataModal() {
                     <span className="font-mono font-bold text-rose-600">₹24.0L (+21 Days Late)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Prediction Confidence:</span>
-                    <span className="font-mono font-semibold text-blue-700">87% (Growing Delay Trend)</span>
+                    <span className="text-slate-500">Risk Confidence:</span>
+                    <span className="font-mono font-semibold text-blue-700">87% (Last 3 Settled Invoices Trend)</span>
                   </div>
                   <div className="flex items-center justify-between">
                     <span className="text-slate-500">Supplier Pressure:</span>

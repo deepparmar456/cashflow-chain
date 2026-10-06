@@ -101,12 +101,12 @@ export default function CustomerRisk() {
         </div>
 
         <div className="p-4 rounded-xl bg-white border border-slate-200 shadow-sm">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Prediction Confidence</span>
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Risk Confidence</span>
           <div className="mt-1 text-3xl font-extrabold font-mono tracking-tight text-blue-600">
             {customerRisk.confidence_formatted || '87%'}
           </div>
-          <span className="text-[11px] font-mono text-slate-500 mt-1 block">
-            Based on Past 3 Payments
+          <span className="text-[11px] text-slate-500 mt-1 block leading-snug">
+            Based on a clear upward payment-delay trend across the last 3 settled invoices.
           </span>
         </div>
       </div>
@@ -160,11 +160,11 @@ export default function CustomerRisk() {
           <div>
             <h3 className="text-base font-bold text-slate-900">Recent Payment History</h3>
             <p className="text-xs text-slate-500">
-              Shows how {customerRisk.name || 'ABC Industries'} has been paying 5 days later each month.
+              Based on a clear upward payment-delay trend across the last 3 settled invoices (6d → 11d → 16d).
             </p>
           </div>
           <span className="text-xs font-mono text-rose-700 bg-rose-50 px-2.5 py-1 rounded border border-rose-200 font-semibold self-start sm:self-auto">
-            Growing Delay Trend: +{customerRisk.model_metadata?.slope || 5.0} Days / Month
+            Delay Trend: +{customerRisk.model_metadata?.slope || 5.0} Days / Cycle
           </span>
         </div>
 
@@ -232,7 +232,7 @@ export default function CustomerRisk() {
               className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
             >
               <HelpCircle className="w-3.5 h-3.5" />
-              <span>{showModelDetails ? 'Hide Prediction Formula' : 'Why? / View Prediction Model Formula & Details'}</span>
+              <span>{showModelDetails ? 'Hide Methodology & Formula' : 'Why? / View Trend Methodology & Formula'}</span>
               {showModelDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
             </button>
             {showModelDetails && (
@@ -240,11 +240,11 @@ export default function CustomerRisk() {
                 <div className="flex items-center gap-2">
                   <Calculator className="w-4 h-4 text-blue-600 shrink-0" />
                   <span>
-                    <strong>Linear Trend Formula:</strong> <code className="text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200 font-bold">{customerRisk.model_metadata.formula}</code> (Period 4 → +{customerRisk.predicted_delay_days} days)
+                    <strong>Methodology:</strong> Linear regression → +{customerRisk.model_metadata.slope} days/cycle → projected +{customerRisk.predicted_delay_days} days (<code className="text-blue-700 bg-white px-2 py-0.5 rounded border border-blue-200 font-bold">{customerRisk.model_metadata.formula}</code>)
                   </span>
                 </div>
                 <div>
-                  Fit: <strong>R² = {customerRisk.model_metadata.r_squared}</strong> • Slope: <strong>+{customerRisk.model_metadata.slope}d/period</strong> • Confidence: <strong>{customerRisk.confidence_formatted}</strong>
+                  Trend: <strong>6d → 11d → 16d → 21d</strong> • Risk Confidence: <strong>{customerRisk.confidence_formatted}</strong>
                 </div>
               </div>
             )}

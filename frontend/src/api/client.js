@@ -5,9 +5,18 @@
 
 const BASE_URL = '';
 
+// Unique session ID per browser tab so uploading custom data in one tab never affects another judge's tab
+const SESSION_ID = typeof crypto !== 'undefined' && crypto.randomUUID
+  ? crypto.randomUUID()
+  : 'sess_' + Math.random().toString(36).substring(2, 12) + '_' + Date.now();
+
+const DEFAULT_HEADERS = {
+  'X-Session-Id': SESSION_ID
+};
+
 export async function fetchMetrics(intervention = 'NONE') {
   try {
-    const res = await fetch(`${BASE_URL}/api/metrics?intervention=${intervention}`);
+    const res = await fetch(`${BASE_URL}/api/metrics?intervention=${intervention}`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -18,7 +27,7 @@ export async function fetchMetrics(intervention = 'NONE') {
 
 export async function fetchTimeline(intervention = 'NONE') {
   try {
-    const res = await fetch(`${BASE_URL}/api/timeline?intervention=${intervention}`);
+    const res = await fetch(`${BASE_URL}/api/timeline?intervention=${intervention}`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -29,7 +38,7 @@ export async function fetchTimeline(intervention = 'NONE') {
 
 export async function fetchCustomerRisk() {
   try {
-    const res = await fetch(`${BASE_URL}/api/customer-risk`);
+    const res = await fetch(`${BASE_URL}/api/customer-risk`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -40,7 +49,7 @@ export async function fetchCustomerRisk() {
 
 export async function fetchImpactChain(intervention = 'NONE') {
   try {
-    const res = await fetch(`${BASE_URL}/api/impact-chain?intervention=${intervention}`);
+    const res = await fetch(`${BASE_URL}/api/impact-chain?intervention=${intervention}`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -51,7 +60,7 @@ export async function fetchImpactChain(intervention = 'NONE') {
 
 export async function fetchInterventions() {
   try {
-    const res = await fetch(`${BASE_URL}/api/interventions`);
+    const res = await fetch(`${BASE_URL}/api/interventions`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -62,7 +71,7 @@ export async function fetchInterventions() {
 
 export async function fetchExecutiveExplanation(intervention = 'NONE') {
   try {
-    const res = await fetch(`${BASE_URL}/api/executive-explanation?intervention=${intervention}`);
+    const res = await fetch(`${BASE_URL}/api/executive-explanation?intervention=${intervention}`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -73,7 +82,7 @@ export async function fetchExecutiveExplanation(intervention = 'NONE') {
 
 export async function fetchSkuDetails() {
   try {
-    const res = await fetch(`${BASE_URL}/api/sku-details`);
+    const res = await fetch(`${BASE_URL}/api/sku-details`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -119,6 +128,7 @@ export async function uploadDataPack(filesMap) {
     const res = await fetch(`${BASE_URL}/api/upload-datapack`, {
       method: 'POST',
       headers: {
+        ...DEFAULT_HEADERS,
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({ files: filesMap })
@@ -137,7 +147,8 @@ export async function uploadDataPack(filesMap) {
 export async function resetBenchmarkScenario() {
   try {
     const res = await fetch(`${BASE_URL}/api/reset-benchmark`, {
-      method: 'POST'
+      method: 'POST',
+      headers: DEFAULT_HEADERS
     });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
@@ -149,7 +160,7 @@ export async function resetBenchmarkScenario() {
 
 export async function fetchDatapackStatus() {
   try {
-    const res = await fetch(`${BASE_URL}/api/datapack/status`);
+    const res = await fetch(`${BASE_URL}/api/datapack/status`, { headers: DEFAULT_HEADERS });
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
@@ -312,8 +323,8 @@ function getFallbackCustomerRisk() {
       {
         title: "Payment Delays Escalating",
         severity: "CRITICAL",
-        metric: "+5.0 days/period trend",
-        description: "Regression model trained on historical payments (6d, 11d, 16d) extrapolates delay to 21 days (R² = 1.00)."
+        metric: "+5.0 days/cycle trend",
+        description: "Based on a clear upward payment-delay trend across the last 3 settled invoices (6d → 11d → 16d → projected +21d)."
       },
       {
         title: "Outstanding Exposure Spike",
@@ -352,30 +363,30 @@ function getFallbackImpactChain(intervention) {
       {
         id: "node_customer",
         type: "customFinancialNode",
-        position: { x: 40, y: 140 },
+        position: { x: 0, y: 120 },
         data: {
           step_number: 1,
           title: "ABC Industries",
-          subtitle: "Receivable at Risk",
+          subtitle: "Late Payment",
           amount: "₹24.0L",
           status: isHealthy ? "HEALTHY" : "CRITICAL",
-          metric_label: "Predicted Delay",
+          metric_label: "Expected Delay",
           metric_value: isHealthy ? "0 days" : "+21 days",
           details: {
             formula: "Delay(t) = 5.0 * t + 1.0",
-            variables: { "Invoice ID": "INV-2026-0891", "Due Date": "08-Oct-2026", "Forecast Date": isHealthy ? "10-Oct-2026" : "29-Oct-2026", "Confidence": "87%" },
-            explanation: "Payment delay trend model (Delay(t) = 5.0 * t + 1.0) projects a 21-day delay on the ₹24L scheduled inflow, deferring liquidity past the mid-month payable date."
+            variables: { "Invoice ID": "INV-2026-0891", "Due Date": "08-Oct-2026", "Expected Arrival": isHealthy ? "10-Oct-2026" : "29-Oct-2026", "Risk Confidence": "87%" },
+            explanation: "Based on a clear upward payment-delay trend across the last 3 settled invoices (6d → 11d → 16d), linear trend projects a 21-day delay on the ₹24L scheduled inflow."
           }
         }
       },
       {
         id: "node_cash",
         type: "customFinancialNode",
-        position: { x: 440, y: 140 },
+        position: { x: 365, y: 120 },
         data: {
           step_number: 2,
           title: "Cash Buffer Breach",
-          subtitle: "Liquidity Shock",
+          subtitle: "Cash Gap",
           amount: isHealthy ? (intervention === 'OPTION_A' ? "₹20.7L min" : "₹20.1L min") : (isPartial ? "₹11.6L min" : "₹6.6L min"),
           status: isHealthy ? "HEALTHY" : "CRITICAL",
           metric_label: "Safety Buffer",
@@ -390,11 +401,11 @@ function getFallbackImpactChain(intervention) {
       {
         id: "node_supplier",
         type: "customFinancialNode",
-        position: { x: 840, y: 140 },
+        position: { x: 730, y: 120 },
         data: {
           step_number: 3,
           title: "Supplier X",
-          subtitle: "Supplier Payment at Risk",
+          subtitle: "Supplier Pressure",
           amount: "₹12.0L",
           status: isHealthy ? "HEALTHY" : (isPartial ? "HEALTHY" : "CRITICAL"),
           metric_label: "Payment Status",
@@ -409,11 +420,11 @@ function getFallbackImpactChain(intervention) {
       {
         id: "node_procurement",
         type: "customFinancialNode",
-        position: { x: 1240, y: 140 },
+        position: { x: 1095, y: 120 },
         data: {
           step_number: 4,
           title: "Raw Material PO-8841",
-          subtitle: "Procurement Frozen",
+          subtitle: "Shipment Hold",
           amount: "300 kg",
           status: isHealthy ? "HEALTHY" : "WARNING",
           metric_label: "Dispatch Status",
@@ -428,11 +439,11 @@ function getFallbackImpactChain(intervention) {
       {
         id: "node_inventory",
         type: "customFinancialNode",
-        position: { x: 1640, y: 140 },
+        position: { x: 1460, y: 120 },
         data: {
           step_number: 5,
           title: "Production Inventory",
-          subtitle: "Days of Stock Depletion",
+          subtitle: "Inventory Impact",
           amount: isHealthy ? "0 Days" : (isPartial ? "5 Days" : "12 Days"),
           status: isHealthy ? "HEALTHY" : (isPartial ? "WARNING" : "CRITICAL"),
           metric_label: "Shortage Duration",
@@ -440,26 +451,26 @@ function getFallbackImpactChain(intervention) {
           details: {
             formula: "Stockout = max(0, Lead_Time + Freeze - Days_Stock)",
             variables: { "Buffer": "180 units (18 days)", "Demand": "10 units/day", "Delivery Cycle": isHealthy ? "14 days" : "30 days" },
-            explanation: "Buffer stock lasts 18 days, but delivery is delayed to 30 days, causing an unrecoverable 12-day assembly line shutdown."
+            explanation: "Buffer stock lasts 18 days, but delivery is delayed to 30 days, causing a 12-day assembly line shutdown."
           }
         }
       },
       {
         id: "node_revenue",
         type: "customFinancialNode",
-        position: { x: 2040, y: 140 },
+        position: { x: 1825, y: 120 },
         data: {
           step_number: 6,
-          title: "Revenue Exposure",
-          subtitle: "Order SLA Breach",
+          title: "Orders at Risk",
+          subtitle: "Revenue Exposed",
           amount: isHealthy ? "₹0.0L" : (isPartial ? "₹13.0L" : "₹31.0L"),
           status: isHealthy ? "HEALTHY" : (isPartial ? "WARNING" : "CRITICAL"),
-          metric_label: "Exposure Protected",
+          metric_label: "Revenue Protected",
           metric_value: isHealthy ? "₹31.0L (100%)" : (isPartial ? "₹18.0L (58%)" : "₹0.0L (0%)"),
           details: {
             formula: "Exposure = 120 * ₹25,833.33 = ₹31,00,000",
             variables: { "Zenith Dynamics (SO-4021)": "80 units = ₹20,66,666", "Apex Infra (SO-4029)": "40 units = ₹10,33,334" },
-            explanation: "120 unproduced inverter units directly violate delivery SLAs for two key enterprise accounts, incurring total cancellation loss of ₹31L."
+            explanation: "120 unproduced inverter units breach delivery SLAs for two key enterprise accounts, exposing ₹31L of customer orders."
           }
         }
       }
@@ -496,8 +507,8 @@ function getFallbackInterventions() {
         net_benefit: 3052000.0,
         net_benefit_formatted: "₹30.52L",
         execution_speed: "24 - 48 Hours",
-        mechanism: "2.0% dynamic cash discount on ₹24L ($24,00,000 * 0.02 = ₹48,000). Accelerates inflow to Day 10, preventing working capital breach entirely.",
-        tradeoff: "Direct P&L discount charge of ₹48K, but yields 64.6x return in protected finished goods revenue.",
+        mechanism: "2.0% dynamic cash discount on ₹24L (₹24,00,000 * 0.02 = ₹48,000). Accelerates inflow to Day 10, preventing working capital breach entirely.",
+        tradeoff: "Direct discount cost of ₹48K, protecting 100% of ₹31.0L exposed orders in this scenario (₹30.52L net value protected).",
         is_recommended: true,
         optimization_status: "OPTIMAL_SOLUTION",
         optimization_rationale: "Unique mathematical minimizer of the constrained cost objective function: min Cost subject to 100% exposure protection."
@@ -515,7 +526,7 @@ function getFallbackInterventions() {
         net_benefit_formatted: "₹18.0L",
         execution_speed: "3 - 5 Business Days",
         mechanism: "Negotiate 7-day payment extension with Supplier X (due Oct 21 instead of Oct 14).",
-        tradeoff: "Zero direct monetary cost, but only protects ₹18L of revenue; leaves a 5-day stockout and ₹13L order cancellation risk.",
+        tradeoff: "Zero direct monetary cost, but only protects ₹18L of revenue; leaves a 5-day stockout and ₹13L of orders exposed.",
         is_recommended: false,
         optimization_status: "INFEASIBLE_UNDER_FULL_PROTECTION",
         optimization_rationale: "Fails full coverage constraint (Coverage = 58.1% < 100%). Leaves ₹13.0L residual unmitigated enterprise exposure."
@@ -533,7 +544,7 @@ function getFallbackInterventions() {
         net_benefit_formatted: "₹29.90L",
         execution_speed: "2 - 3 Business Days",
         mechanism: "Factor ABC Industries ₹24L invoice at 1.5% platform fee + 14% p.a. pro-rata for 30 days. Liquidity delivered Oct 9.",
-        tradeoff: "Fully protects ₹31L, but incurs ₹1,10,000 financing fee (2.29x more expensive than Option A).",
+        tradeoff: "Protects ₹31L of exposed orders, but incurs ₹1,10,000 financing fee (2.29x more expensive than Option A).",
         is_recommended: false,
         optimization_status: "SUBOPTIMAL",
         optimization_rationale: "Satisfies 100% protection constraint but is strictly dominated by Option A on cost (₹1.10L vs ₹48K)."
@@ -550,8 +561,8 @@ function getFallbackExecutiveMemo(intervention) {
     executive_summary: "ABC Industries' predicted payment delay creates a potential liquidity chain reaction. The delayed ₹24L inflow may push available cash below the supplier-payment threshold, putting a ₹12L supplier obligation at risk. This could delay raw-material procurement and expose approximately ₹31L of revenue.",
     evidence: [
       "Customer ABC Industries accounts for an upcoming scheduled inflow of ₹24,00,000 on 08-Oct-2026 (48.2% of first-half collections).",
-      "Rolling delay telemetry shows payment turnaround deteriorating from +6 days (Jul) to +11 days (Aug) and +16 days (Sep).",
-      "Payment delay trend model (Delay(t) = 5.0 * t + 1.0) projects a 21-day payment delay to 29-Oct-2026 with 87% risk confidence (R² = 1.00)."
+      "Based on a clear upward payment-delay trend across the last 3 settled invoices (6d → 11d → 16d).",
+      "Linear trend (Delay(t) = 5.0 * t + 1.0) projects a 21-day payment delay to 29-Oct-2026 with 87% risk confidence."
     ],
     impact: [
       "Liquidity Cascade: The ₹24L delayed inflow could push cumulative operating cash down to ₹6.6L, breaching the mandatory ₹15.0L working capital threshold.",
@@ -561,7 +572,7 @@ function getFallbackExecutiveMemo(intervention) {
     ],
     action: [
       "RECOMMENDED ACTION: Deploy Option A — Early Payment Incentive.",
-      "Mathematical Optimization Rationale: Formulated as min Cost(a) subject to 100% exposure protection. Option A costs ₹48,000 versus ₹1,10,000 for Option C, achieving identical 100% protection at 56.4% lower expenditure.",
+      "Mathematical Optimization Rationale: Formulated as min Cost(a) subject to 100% exposure protection. Option A costs ₹48,000 versus ₹1,10,000 for Option C, achieving identical 100% protection in this scenario at 56.4% lower expenditure (₹30.52L net value protected).",
       "Immediate Implementation Step: Dispatch commercial incentive notice #INC-0891 to ABC Industries Treasury with a 48-hour acceptance window."
     ],
     math_summary: {

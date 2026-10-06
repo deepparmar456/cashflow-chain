@@ -40,41 +40,41 @@ function CustomFinancialNode({ data, id }) {
   return (
     <div
       onClick={() => setSelectedNode({ id, ...data })}
-      className={`group relative w-[320px] rounded-2xl border-2 p-5 bg-white transition-all cursor-pointer ${
+      className={`group relative w-[335px] rounded-2xl border-2 p-6 bg-white transition-all cursor-pointer ${
         currentStatus.bg
       } ${currentStatus.border} ${currentStatus.glow} ${
         isSelected ? 'ring-4 ring-blue-500/30 shadow-md scale-105' : 'hover:scale-[1.02] shadow-sm'
       }`}
     >
-      <Handle type="target" position={Position.Left} className="!bg-slate-300 !w-3 !h-3" />
-      <Handle type="source" position={Position.Right} className="!bg-blue-600 !w-3 !h-3" />
+      <Handle type="target" position={Position.Left} className="!bg-slate-400 !w-3.5 !h-3.5" />
+      <Handle type="source" position={Position.Right} className="!bg-blue-600 !w-3.5 !h-3.5" />
 
       {/* Top Header Row */}
-      <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-2.5">
+      <div className="flex items-center justify-between gap-2 border-b border-slate-200 pb-3">
         <div className="flex items-center gap-2">
-          <span className="flex items-center justify-center w-6 h-6 rounded-full bg-slate-100 text-xs font-mono font-bold text-slate-700 border border-slate-200">
+          <span className="flex items-center justify-center w-7 h-7 rounded-full bg-slate-100 text-xs font-mono font-extrabold text-slate-800 border border-slate-300">
             {data.step_number}
           </span>
-          <span className="text-xs font-mono font-semibold text-slate-500 uppercase tracking-wider">{data.subtitle}</span>
+          <span className="text-xs font-mono font-bold text-slate-600 uppercase tracking-wider">{data.subtitle}</span>
         </div>
-        <span className={`inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-md text-[11px] font-mono font-bold uppercase border ${currentStatus.badgeBg}`}>
+        <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md text-xs font-mono font-bold uppercase border ${currentStatus.badgeBg}`}>
           <StatusIcon className="w-3.5 h-3.5" />
           <span>{data.status}</span>
         </span>
       </div>
 
       {/* Node Main Title & Key Monetary Impact */}
-      <div className="mt-3.5">
-        <h4 className="text-base font-bold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
+      <div className="mt-4">
+        <h4 className="text-lg font-extrabold text-slate-900 truncate group-hover:text-blue-600 transition-colors">
           {data.title}
         </h4>
-        <div className="mt-2 flex items-baseline justify-between">
-          <span className="text-2xl font-black font-mono text-slate-900 tracking-tight">
+        <div className="mt-2.5 flex items-baseline justify-between">
+          <span className="text-3xl font-black font-mono text-slate-900 tracking-tight">
             {data.amount}
           </span>
           <div className="text-right">
-            <span className="text-[11px] text-slate-500 block font-mono font-medium">{data.metric_label}</span>
-            <span className={`text-sm font-mono font-black ${currentStatus.text}`}>
+            <span className="text-xs text-slate-500 block font-mono font-semibold">{data.metric_label}</span>
+            <span className={`text-base font-mono font-black ${currentStatus.text}`}>
               {data.metric_value}
             </span>
           </div>
@@ -82,12 +82,12 @@ function CustomFinancialNode({ data, id }) {
       </div>
 
       {/* Footer Cue */}
-      <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-mono text-slate-500">
-        <span className="flex items-center gap-1.5 text-blue-600 font-semibold group-hover:text-blue-700 font-sans">
-          <Calculator className="w-3.5 h-3.5" />
-          <span>Why? / View Details</span>
+      <div className="mt-4 pt-3 border-t border-slate-200/80 flex items-center justify-between text-xs font-mono text-slate-500">
+        <span className="flex items-center gap-1.5 text-blue-600 font-bold group-hover:text-blue-700 font-sans">
+          <Calculator className="w-4 h-4" />
+          <span>Click for numbers &amp; formula</span>
         </span>
-        <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" />
+        <ExternalLink className="w-3.5 h-3.5 opacity-70 group-hover:opacity-100" />
       </div>
     </div>
   );

@@ -75,7 +75,7 @@ export default function ImpactChain() {
             <span className={`text-lg font-black font-mono tracking-tight ${
               isProtected ? 'text-emerald-600' : 'text-rose-600'
             }`}>
-              {isProtected ? '₹31.0L (100% Protected)' : '₹31.0L Exposed'}
+              {isProtected ? '₹31.0L (100% Protected in This Scenario)' : '₹31.0L Exposed'}
             </span>
           </div>
 
@@ -109,8 +109,8 @@ export default function ImpactChain() {
           onEdgesChange={onEdgesChange}
           nodeTypes={nodeTypes}
           fitView
-          fitViewOptions={{ padding: 0.1 }}
-          minZoom={0.3}
+          fitViewOptions={{ padding: 0.03 }}
+          minZoom={0.25}
           maxZoom={1.5}
           className="bg-slate-50"
           style={{ width: '100%', height: '100%' }}

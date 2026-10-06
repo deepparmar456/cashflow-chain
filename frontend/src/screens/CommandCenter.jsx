@@ -116,10 +116,10 @@ export default function CommandCenter() {
                   <span className="text-xs text-emerald-800 font-semibold">“Here’s the outcome.”</span>
                 </div>
                 <h2 className="mt-1.5 text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                  Cash Protected &amp; All Customer Orders Saved
+                  ₹48,000 Action Protects ₹31L of Exposed Orders
                 </h2>
                 <p className="mt-1 text-sm text-slate-700">
-                  Early Payment Incentive brings in ₹24.0L on Oct 10 for a ₹48,000 discount. All ₹31.0L in customer orders are 100% protected.
+                  Early Payment Incentive brings in ₹24.0L on Oct 10 for a ₹48,000 discount — ₹30.52L net value protected (100% protected in this scenario).
                 </p>
               </div>
             </div>
@@ -182,7 +182,7 @@ export default function CommandCenter() {
           <span className={`text-xs mt-1 block font-medium ${
             isProtected ? 'text-emerald-700' : 'text-rose-600'
           }`}>
-            {isProtected ? 'All Customer Orders Delivered On Time' : '2 Customer Orders Delayed by 12-Day Stockout'}
+            {isProtected ? '100% Protected in This Scenario (₹30.52L Net)' : '2 Customer Orders Delayed by 12-Day Stockout'}
           </span>
         </div>
       </div>

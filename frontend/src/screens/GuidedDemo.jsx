@@ -69,9 +69,9 @@ export default function GuidedDemo() {
     <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 flex flex-col font-sans">
       {/* 1. TOP PROGRESS NAVIGATION BAR */}
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 shadow-xs">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex flex-col lg:flex-row items-center justify-between gap-3">
+        <div className="max-w-[1640px] mx-auto px-4 sm:px-6 py-2.5 flex flex-wrap xl:flex-nowrap items-center justify-between gap-2.5">
           {/* Progress Steps: 01 Predict -> 02 Trace -> 03 Compare -> 04 Prevent -> 05 Verdict */}
-          <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0">
+          <div className="flex items-center gap-1 sm:gap-1.5 flex-wrap sm:flex-nowrap w-full xl:w-auto justify-center xl:justify-start">
             {GUIDED_STAGES.map((stg, idx) => {
               const isActive = guidedStep === stg.id;
               const isPast = guidedStep > stg.id;
@@ -79,7 +79,7 @@ export default function GuidedDemo() {
                 <React.Fragment key={stg.id}>
                   <button
                     onClick={() => setGuidedStep(stg.id)}
-                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                    className={`flex items-center gap-1.5 px-2.5 sm:px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 whitespace-nowrap ${
                       isActive
                         ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-500/20'
                         : isPast
@@ -87,7 +87,7 @@ export default function GuidedDemo() {
                         : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
                     }`}
                   >
-                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold ${
+                    <span className={`w-4 h-4 rounded-full flex items-center justify-center text-[10px] font-bold shrink-0 ${
                       isActive
                         ? 'bg-white text-blue-600'
                         : isPast
@@ -96,10 +96,10 @@ export default function GuidedDemo() {
                     }`}>
                       {isPast ? '✓' : stg.id}
                     </span>
-                    <span>{stg.title}</span>
+                    <span className="whitespace-nowrap">{stg.title}</span>
                   </button>
                   {idx < GUIDED_STAGES.length - 1 && (
-                    <span className="text-slate-300 font-bold text-xs px-0.5">→</span>
+                    <span className="text-slate-300 font-bold text-xs px-0.5 hidden sm:inline">→</span>
                   )}
                 </React.Fragment>
               );
@@ -107,16 +107,16 @@ export default function GuidedDemo() {
           </div>
 
           {/* Current Step Indicator + Obvious Back / Next Controls */}
-          <div className="flex items-center justify-between lg:justify-end gap-2 w-full lg:w-auto shrink-0">
-            <span className="text-xs font-mono font-semibold text-slate-500 hidden sm:inline px-2 py-1 rounded bg-slate-100 border border-slate-200">
-              Step {guidedStep} of 5: {currentStageObj.story}
+          <div className="flex items-center justify-between xl:justify-end gap-2 w-full xl:w-auto shrink-0">
+            <span className="text-xs font-mono font-semibold text-slate-500 hidden md:inline px-2.5 py-1 rounded bg-slate-100 border border-slate-200 whitespace-nowrap">
+              Step {guidedStep} of 5 <span className="hidden 2xl:inline">• {currentStageObj.story}</span>
             </span>
 
-            <div className="flex items-center gap-2 ml-auto lg:ml-0">
+            <div className="flex items-center gap-1.5 ml-auto xl:ml-0">
               <button
                 onClick={prevGuidedStep}
                 disabled={guidedStep === 1}
-                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer shadow-2xs"
+                className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer shadow-2xs"
               >
                 <ArrowLeft className="w-3.5 h-3.5" />
                 <span>Back</span>
@@ -125,7 +125,7 @@ export default function GuidedDemo() {
               <button
                 onClick={nextGuidedStep}
                 disabled={guidedStep === 5}
-                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer"
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer"
               >
                 <span>Next</span>
                 <ArrowRight className="w-3.5 h-3.5" />
@@ -154,7 +154,7 @@ export default function GuidedDemo() {
       </header>
 
       {/* 2. DYNAMIC STORY CONTENT */}
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col justify-between">
+      <main className="flex-1 max-w-[1600px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col justify-between">
         {/* ============================================================ */}
         {/* STEP 1: 01 PREDICT — "Something might go wrong."             */}
         {/* ============================================================ */}
@@ -174,7 +174,7 @@ export default function GuidedDemo() {
                 → Expected payment delay: {predictedDelay} days
               </p>
               <p className="text-sm text-slate-600 max-w-2xl">
-                Before the invoice even becomes overdue, CashFlow Chain spots a consistent pattern of slower payments from {focalCustomer}.
+                Before the invoice even becomes overdue, CashFlow Chain spots a consistent upward payment-delay trend across the last 3 settled invoices from {focalCustomer}.
               </p>
             </div>
 
@@ -199,9 +199,9 @@ export default function GuidedDemo() {
               </div>
 
               <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Prediction Confidence</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Risk Confidence</span>
                 <div className="mt-1 text-2xl font-bold font-mono text-blue-600">{confidence}</div>
-                <span className="text-xs text-slate-500 mt-0.5 block">Based on recent payment trend</span>
+                <span className="text-xs text-slate-500 mt-0.5 block">Based on last 3 settled invoices</span>
               </div>
             </div>
 
@@ -213,11 +213,11 @@ export default function GuidedDemo() {
                     Why We Expect This Delay (Recent Payment History)
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Each month, {focalCustomer} has paid 5 days later than the month before.
+                    Based on a clear upward payment-delay trend across the last 3 settled invoices.
                   </p>
                 </div>
                 <span className="text-xs font-mono font-semibold text-rose-700 bg-rose-50 px-2.5 py-1 rounded border border-rose-200 self-start sm:self-auto">
-                  Growing Delay Pattern: 6d → 11d → 16d → 21d
+                  Upward Delay Trend: 6d → 11d → 16d → 21d
                 </span>
               </div>
 
@@ -254,14 +254,14 @@ export default function GuidedDemo() {
                   className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
                 >
                   <HelpCircle className="w-3.5 h-3.5" />
-                  <span>{showPredictDetails ? 'Hide Technical Formula' : 'Why? / View Prediction Model Details'}</span>
+                  <span>{showPredictDetails ? 'Hide Methodology Details' : 'Why? / View Trend Methodology'}</span>
                   {showPredictDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
                 </button>
                 {showPredictDetails && (
                   <div className="mt-2 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700 space-y-1">
-                    <div><strong>Model:</strong> Ordinary Least Squares Linear Regression (Scikit-Learn)</div>
-                    <div><strong>Equation:</strong> <code>Delay(t) = 5.0 * t + 1.0</code> (where t = billing period 1, 2, 3, 4)</div>
-                    <div><strong>Goodness of Fit:</strong> R² = 1.00 | Slope = +5.0 days/cycle | Confidence = 87%</div>
+                    <div><strong>Basis:</strong> Based on a clear upward payment-delay trend across the last 3 settled invoices.</div>
+                    <div><strong>Methodology:</strong> Linear regression → +5 days/cycle → projected +21 days (<code>Delay(t) = 5.0 * t + 1.0</code>)</div>
+                    <div><strong>Risk Confidence:</strong> 87% (consistent +5d/cycle escalation combined with 48.2% monthly cash inflow concentration)</div>
                   </div>
                 )}
               </div>
@@ -370,7 +370,7 @@ export default function GuidedDemo() {
             </div>
 
             {/* Embedded Live React Flow Canvas */}
-            <div className="relative w-full h-[500px] min-h-[500px] rounded-2xl border-2 border-slate-200 bg-white overflow-hidden shadow-sm">
+            <div className="relative w-full h-[520px] min-h-[520px] rounded-2xl border-2 border-slate-200 bg-white overflow-hidden shadow-sm">
               <div className="absolute top-3 left-4 z-10 px-3 py-1 rounded-full bg-white/90 backdrop-blur border border-slate-200 text-[11px] font-medium text-slate-600 shadow-2xs">
                 💡 Click any card in the chain to inspect its exact numbers and formula
               </div>
@@ -381,7 +381,7 @@ export default function GuidedDemo() {
                 onEdgesChange={onEdgesChange}
                 nodeTypes={nodeTypes}
                 fitView
-                fitViewOptions={{ padding: 0.12 }}
+                fitViewOptions={{ padding: 0.03 }}
                 minZoom={0.3}
                 maxZoom={1.5}
                 className="bg-slate-50"
@@ -414,7 +414,7 @@ export default function GuidedDemo() {
                 How should ABC respond?
               </h2>
               <p className="text-base text-slate-600 max-w-2xl">
-                We compare the 3 available actions side-by-side to find the lowest-cost way to protect all <strong>₹31.0L</strong> of customer orders.
+                We compare the 3 available actions side-by-side to find the lowest-cost way to protect all <strong>₹31.0L</strong> of exposed customer orders in this scenario.
               </p>
             </div>
 
@@ -442,16 +442,16 @@ export default function GuidedDemo() {
                       <span className="font-bold font-mono text-emerald-700 text-sm">₹48,000 (2%)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Revenue Protected:</span>
-                      <span className="font-bold font-mono text-emerald-700 text-sm">₹31.0L (100%)</span>
+                      <span className="text-slate-500">Orders Protected:</span>
+                      <span className="font-bold font-mono text-emerald-700 text-sm">₹31.0L (100% in scenario)</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">Inventory Stockout:</span>
                       <span className="font-bold font-mono text-emerald-700">0 Days (None)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Net Value Saved:</span>
-                      <span className="font-bold font-mono text-emerald-800">+₹30.52L (64.6x return)</span>
+                      <span className="text-slate-500">Net Value Protected:</span>
+                      <span className="font-bold font-mono text-emerald-800">₹30.52L net value protected</span>
                     </div>
                   </div>
                 </div>
@@ -487,7 +487,7 @@ export default function GuidedDemo() {
                       <span className="font-bold font-mono text-slate-900 text-sm">₹0</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Revenue Protected:</span>
+                      <span className="text-slate-500">Orders Protected:</span>
                       <span className="font-bold font-mono text-amber-600 text-sm">₹18.0L (Only 58%)</span>
                     </div>
                     <div className="flex items-center justify-between">
@@ -496,7 +496,7 @@ export default function GuidedDemo() {
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">Unprotected Risk:</span>
-                      <span className="font-bold font-mono text-rose-600">₹13.0L still lost</span>
+                      <span className="font-bold font-mono text-rose-600">₹13.0L still exposed</span>
                     </div>
                   </div>
                 </div>
@@ -531,16 +531,16 @@ export default function GuidedDemo() {
                       <span className="font-bold font-mono text-rose-600 text-sm">₹1.10L (Interest + Fee)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Revenue Protected:</span>
-                      <span className="font-bold font-mono text-emerald-700 text-sm">₹31.0L (100%)</span>
+                      <span className="text-slate-500">Orders Protected:</span>
+                      <span className="font-bold font-mono text-emerald-700 text-sm">₹31.0L (100% in scenario)</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">Inventory Stockout:</span>
                       <span className="font-bold font-mono text-emerald-700">0 Days (None)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Why Not Selected:</span>
-                      <span className="font-bold font-mono text-slate-600">2.3x more expensive</span>
+                      <span className="text-slate-500">Net Value Protected:</span>
+                      <span className="font-bold font-mono text-slate-600">₹29.90L (2.3x higher cost)</span>
                     </div>
                   </div>
                 </div>
@@ -574,8 +574,8 @@ export default function GuidedDemo() {
               {showCompareDetails && (
                 <div className="mt-3 pt-3 border-t border-slate-100 text-xs font-mono text-slate-700 space-y-1.5">
                   <div><strong>Selection Rule:</strong> <code>Minimize Action Cost(a) subject to Revenue Protected(a) == ₹31.0L (100%)</code></div>
-                  <div>• <strong>Option B</strong> is rejected because it only protects 58% of revenue (leaving ₹13.0L of orders canceled).</div>
-                  <div>• <strong>Option A (₹48,000)</strong> beats <strong>Option C (₹1,10,000)</strong> because both protect 100% of revenue, while Option A saves ₹62,000 in financing costs.</div>
+                  <div>• <strong>Option B</strong> is rejected because it only protects 58% of revenue (leaving ₹13.0L of orders exposed).</div>
+                  <div>• <strong>Option A (₹48,000)</strong> beats <strong>Option C (₹1,10,000)</strong> because both protect 100% of exposed orders in this scenario, while Option A delivers <strong>₹30.52L net value protected</strong> (saving ₹62,000 in financing fees).</div>
                 </div>
               )}
             </div>
@@ -600,7 +600,7 @@ export default function GuidedDemo() {
                   Choose the best action.
                 </h2>
                 <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
-                  Applying <strong>Option A (Early Payment Incentive)</strong> brings in the ₹24.0L payment on Oct 10—keeping cash healthy, paying Supplier X on time, and protecting all ₹31.0L of customer orders.
+                  Applying <strong>Option A (Early Payment Incentive)</strong> brings in the ₹24.0L payment on Oct 10—keeping cash healthy, paying Supplier X on time, and protecting all ₹31.0L of exposed customer orders in this scenario.
                 </p>
               </div>
 
@@ -621,10 +621,10 @@ export default function GuidedDemo() {
                   RECOMMENDED ACTION APPLIED (OPTION A)
                 </span>
                 <div className="text-2xl sm:text-4xl font-black tracking-tight mt-1">
-                  ₹48,000 ACTION PREVENTS ₹31,00,000 IN LOST ORDERS
+                  ₹48,000 ACTION PROTECTS ₹31L OF EXPOSED ORDERS
                 </div>
                 <p className="text-emerald-100 text-sm mt-1">
-                  Net Value Protected: +₹30.52L (64.6x Return) • 100% of customer orders delivered on time.
+                  ₹30.52L net value protected • 100% protected in this scenario.
                 </p>
               </div>
 
@@ -632,7 +632,7 @@ export default function GuidedDemo() {
               <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
                 <div className="p-4 rounded-xl bg-black/15 border border-white/20 backdrop-blur-sm">
                   <span className="text-xs font-bold tracking-wider text-rose-200 uppercase block">1. WITHOUT ACTION</span>
-                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹31.0L at Risk</div>
+                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹31.0L Exposed</div>
                   <p className="text-xs text-emerald-100 mt-1">Cash drops to ₹6.6L • 12-day stockout.</p>
                 </div>
 
@@ -644,8 +644,8 @@ export default function GuidedDemo() {
 
                 <div className="p-4 rounded-xl bg-black/15 border border-white/20 backdrop-blur-sm">
                   <span className="text-xs font-bold tracking-wider text-emerald-200 uppercase block">3. AFTER ACTION</span>
-                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹31.0L Protected</div>
-                  <p className="text-xs text-emerald-100 mt-1">0-day outage • Cash stays above ₹20.7L.</p>
+                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹30.52L Net Protected</div>
+                  <p className="text-xs text-emerald-100 mt-1">100% protected in this scenario • Cash &ge; ₹20.7L.</p>
                 </div>
               </div>
             </div>
@@ -654,15 +654,15 @@ export default function GuidedDemo() {
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-600 px-1">
                 <span className="font-bold text-slate-900 uppercase">All 6 Steps in the Chain Now Protected:</span>
-                <span className="text-emerald-700 font-bold font-mono">STATUS: HEALTHY (100% PROTECTED)</span>
+                <span className="text-emerald-700 font-bold font-mono">STATUS: HEALTHY (100% PROTECTED IN THIS SCENARIO)</span>
               </div>
-              <div className="relative w-full h-[350px] min-h-[350px] rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+              <div className="relative w-full h-[360px] min-h-[360px] rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
                 <ReactFlow
                   nodes={nodes}
                   edges={edges}
                   nodeTypes={nodeTypes}
                   fitView
-                  fitViewOptions={{ padding: 0.15 }}
+                  fitViewOptions={{ padding: 0.04 }}
                   minZoom={0.3}
                   maxZoom={1.5}
                   className="bg-slate-50"
@@ -735,22 +735,22 @@ export default function GuidedDemo() {
 
               <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
-                  Revenue Protected
+                  Exposed Orders Protected
                 </span>
                 <div className="text-4xl font-black font-mono text-emerald-600 mt-2">
                   ₹31.0L
                 </div>
-                <span className="text-xs text-slate-500 mt-1 block">Customer Orders Delivered On Time</span>
+                <span className="text-xs text-slate-500 mt-1 block">100% protected in this scenario</span>
               </div>
 
               <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
-                  Orders Protected
+                  Net Value Protected
                 </span>
                 <div className="text-4xl font-black font-mono text-blue-600 mt-2">
-                  100%
+                  ₹30.52L
                 </div>
-                <span className="text-xs text-slate-500 mt-1 block">+₹30.52L Net Value (64.6x ROI)</span>
+                <span className="text-xs text-slate-500 mt-1 block">₹30.52L net value protected</span>
               </div>
             </div>
 

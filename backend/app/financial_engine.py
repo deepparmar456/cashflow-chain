@@ -806,8 +806,8 @@ class FinancialEngine:
                     {
                         "title": "Payment Delays Escalating",
                         "severity": "CRITICAL",
-                        "metric": f"+{pred['slope']:.1f} days/period trend",
-                        "description": f"Regression model trained on historical payments ({', '.join([str(s['delay_days']) + 'd' for s in pred['historical_samples']])}) extrapolates delay to {pred['predicted_delay_days']} days (R² = {pred['r_squared']})."
+                        "metric": f"+{pred['slope']:.1f} days/cycle trend",
+                        "description": f"Based on a clear upward payment-delay trend across the last {len(pred['historical_samples'])} settled invoices ({' → '.join([str(s['delay_days']) + 'd' for s in pred['historical_samples']])} → projected +{pred['predicted_delay_days']}d)."
                     },
                     {
                         "title": "High Concentration Exposure",
@@ -885,8 +885,8 @@ class FinancialEngine:
                 {
                     "title": "Payment Delays Escalating",
                     "severity": "CRITICAL",
-                    "metric": f"+{pred['slope']:.1f} days/period trend",
-                    "description": f"Regression model trained on historical payments ({', '.join([str(s['delay_days']) + 'd' for s in pred['historical_samples']])}) extrapolates delay to {pred['predicted_delay_days']} days (R² = {pred['r_squared']})."
+                    "metric": f"+{pred['slope']:.1f} days/cycle trend",
+                    "description": f"Based on a clear upward payment-delay trend across the last 3 settled invoices ({' → '.join([str(s['delay_days']) + 'd' for s in pred['historical_samples']])} → projected +{pred['predicted_delay_days']}d)."
                 },
                 {
                     "title": "Increasing Outstanding Exposure",
@@ -945,35 +945,35 @@ class FinancialEngine:
                 {
                     "id": "node_customer",
                     "type": "customFinancialNode",
-                    "position": {"x": 40, "y": 140},
+                    "position": {"x": 0, "y": 120},
                     "data": {
                         "step_number": 1,
                         "title": cs["focal_customer_name"],
                         "subtitle": "Receivable at Risk",
                         "amount": f"₹{cs['focal_invoice_amt'] / 100000:.1f}L",
                         "status": node1_status,
-                        "metric_label": "Predicted Delay",
+                        "metric_label": "Expected Delay",
                         "metric_value": "0 days" if is_healthy else f"+{pred['predicted_delay_days']} days",
                         "details": {
                             "formula": pred["formula"],
                             "variables": {
                                 "Invoice ID": cs["focal_invoice_id"],
                                 "Contract Due Date": cs["focal_due_date"],
-                                "Model Confidence": pred["confidence_formatted"],
+                                "Risk Confidence": pred["confidence_formatted"],
                                 "Inflow Volume": f"₹{cs['focal_invoice_amt']:,.0f}"
                             },
-                            "explanation": f"Trend model projects a {pred['predicted_delay_days']}-day delay on the ₹{cs['focal_invoice_amt'] / 100000:.1f}L scheduled inflow."
+                            "explanation": f"Based on a clear upward payment-delay trend across settled invoices, projects a {pred['predicted_delay_days']}-day delay on the ₹{cs['focal_invoice_amt'] / 100000:.1f}L scheduled inflow."
                         }
                     }
                 },
                 {
                     "id": "node_cash",
                     "type": "customFinancialNode",
-                    "position": {"x": 440, "y": 140},
+                    "position": {"x": 365, "y": 120},
                     "data": {
                         "step_number": 2,
                         "title": "Cash Buffer Breach",
-                        "subtitle": "Liquidity Shock",
+                        "subtitle": "Cash Pressure",
                         "amount": f"{metrics['projected_min_cash_formatted']} min",
                         "status": node2_status,
                         "metric_label": "Safety Buffer",
@@ -993,11 +993,11 @@ class FinancialEngine:
                 {
                     "id": "node_supplier",
                     "type": "customFinancialNode",
-                    "position": {"x": 840, "y": 140},
+                    "position": {"x": 730, "y": 120},
                     "data": {
                         "step_number": 3,
                         "title": cs["critical_supplier_name"],
-                        "subtitle": "Supplier Payment at Risk",
+                        "subtitle": "Supplier Pressure",
                         "amount": f"₹{cs['critical_payable_amt'] / 100000:.1f}L",
                         "status": node3_status,
                         "metric_label": "Payment Status",
@@ -1017,11 +1017,11 @@ class FinancialEngine:
                 {
                     "id": "node_procurement",
                     "type": "customFinancialNode",
-                    "position": {"x": 1240, "y": 140},
+                    "position": {"x": 1095, "y": 120},
                     "data": {
                         "step_number": 4,
                         "title": f"Procurement ({cs['critical_payable_id']})",
-                        "subtitle": "Procurement Frozen",
+                        "subtitle": "Shipment Hold",
                         "amount": f"Lead Time {cs['critical_lead_time']}d",
                         "status": node4_status,
                         "metric_label": "Dispatch Status",
@@ -1040,11 +1040,11 @@ class FinancialEngine:
                 {
                     "id": "node_inventory",
                     "type": "customFinancialNode",
-                    "position": {"x": 1640, "y": 140},
+                    "position": {"x": 1460, "y": 120},
                     "data": {
                         "step_number": 5,
                         "title": "Production Inventory",
-                        "subtitle": "Days of Stock Depletion",
+                        "subtitle": "Inventory Impact",
                         "amount": f"{shock['stockout_days']} Days",
                         "status": node5_status,
                         "metric_label": "Shortage Duration",
@@ -1063,14 +1063,14 @@ class FinancialEngine:
                 {
                     "id": "node_revenue",
                     "type": "customFinancialNode",
-                    "position": {"x": 2040, "y": 140},
+                    "position": {"x": 1825, "y": 120},
                     "data": {
                         "step_number": 6,
-                        "title": "Revenue Exposure",
-                        "subtitle": "Order SLA Breach",
+                        "title": "Orders at Risk",
+                        "subtitle": "Revenue Exposed",
                         "amount": shock["revenue_exposure_formatted"],
                         "status": node6_status,
-                        "metric_label": "Exposure Protected",
+                        "metric_label": "Revenue Protected",
                         "metric_value": f"{shock['exposure_protected_formatted']} ({'100%' if is_healthy else ('58%' if is_partial else '0%')})",
                         "details": {
                             "formula": "Revenue_Exposure = sum(Impacted_Units * Unit_Price)",
@@ -1090,36 +1090,36 @@ class FinancialEngine:
                 {
                     "id": "node_customer",
                     "type": "customFinancialNode",
-                    "position": {"x": 40, "y": 140},
+                    "position": {"x": 0, "y": 120},
                     "data": {
                         "step_number": 1,
                         "title": "ABC Industries",
-                        "subtitle": "Receivable at Risk",
+                        "subtitle": "Late Payment",
                         "amount": f"₹{self.focal_invoice_amt / 100000:.1f}L",
                         "status": node1_status,
-                        "metric_label": "Predicted Delay",
+                        "metric_label": "Expected Delay",
                         "metric_value": "0 days" if is_healthy else f"+{pred['predicted_delay_days']} days",
                         "details": {
                             "formula": pred["formula"],
                             "variables": {
                                 "Invoice ID": "INV-2026-0891",
                                 "Contract Due Date": "08-Oct-2026",
-                                "Model Forecast Date": "10-Oct-2026" if is_healthy else "29-Oct-2026",
-                                "Model Confidence": pred["confidence_formatted"],
+                                "Expected Arrival Date": "10-Oct-2026" if is_healthy else "29-Oct-2026",
+                                "Risk Confidence": pred["confidence_formatted"],
                                 "Inflow Volume": f"₹{self.focal_invoice_amt:,.0f}"
                             },
-                            "explanation": f"Payment delay trend model ({pred['formula']}) projects a {pred['predicted_delay_days']}-day delay on the ₹24L scheduled inflow, deferring liquidity past the mid-month payable date."
+                            "explanation": f"Based on a clear upward payment-delay trend across the last 3 settled invoices (6d → 11d → 16d), linear trend ({pred['formula']}) projects a {pred['predicted_delay_days']}-day delay on the ₹24L scheduled inflow."
                         }
                     }
                 },
                 {
                     "id": "node_cash",
                     "type": "customFinancialNode",
-                    "position": {"x": 440, "y": 140},
+                    "position": {"x": 365, "y": 120},
                     "data": {
                         "step_number": 2,
                         "title": "Cash Buffer Breach",
-                        "subtitle": "Liquidity Shock",
+                        "subtitle": "Cash Gap",
                         "amount": f"{metrics['projected_min_cash_formatted']} min",
                         "status": node2_status,
                         "metric_label": "Safety Buffer",
@@ -1140,11 +1140,11 @@ class FinancialEngine:
                 {
                     "id": "node_supplier",
                     "type": "customFinancialNode",
-                    "position": {"x": 840, "y": 140},
+                    "position": {"x": 730, "y": 120},
                     "data": {
                         "step_number": 3,
                         "title": "Supplier X",
-                        "subtitle": "Supplier Payment at Risk",
+                        "subtitle": "Supplier Pressure",
                         "amount": f"₹{self.supplier_x_amt / 100000:.1f}L",
                         "status": node3_status,
                         "metric_label": "Payment Status",
@@ -1165,11 +1165,11 @@ class FinancialEngine:
                 {
                     "id": "node_procurement",
                     "type": "customFinancialNode",
-                    "position": {"x": 1240, "y": 140},
+                    "position": {"x": 1095, "y": 120},
                     "data": {
                         "step_number": 4,
                         "title": "Raw Material PO-8841",
-                        "subtitle": "Procurement Frozen",
+                        "subtitle": "Shipment Hold",
                         "amount": "300 kg",
                         "status": node4_status,
                         "metric_label": "Dispatch Status",
@@ -1190,11 +1190,11 @@ class FinancialEngine:
                 {
                     "id": "node_inventory",
                     "type": "customFinancialNode",
-                    "position": {"x": 1640, "y": 140},
+                    "position": {"x": 1460, "y": 120},
                     "data": {
                         "step_number": 5,
                         "title": "Production Inventory",
-                        "subtitle": "Days of Stock Depletion",
+                        "subtitle": "Inventory Impact",
                         "amount": f"{shock['stockout_days']} Days",
                         "status": node5_status,
                         "metric_label": "Shortage Duration",
@@ -1215,14 +1215,14 @@ class FinancialEngine:
                 {
                     "id": "node_revenue",
                     "type": "customFinancialNode",
-                    "position": {"x": 2040, "y": 140},
+                    "position": {"x": 1825, "y": 120},
                     "data": {
                         "step_number": 6,
-                        "title": "Revenue Exposure",
-                        "subtitle": "Order SLA Breach",
+                        "title": "Orders at Risk",
+                        "subtitle": "Revenue Exposed",
                         "amount": shock["revenue_exposure_formatted"],
                         "status": node6_status,
-                        "metric_label": "Exposure Protected",
+                        "metric_label": "Revenue Protected",
                         "metric_value": f"{shock['exposure_protected_formatted']} ({'100%' if is_healthy else ('58%' if is_partial else '0%')})",
                         "details": {
                             "formula": "Revenue_Exposure = sum(Impacted_Units * Unit_Selling_Price)",
@@ -1233,7 +1233,7 @@ class FinancialEngine:
                                 "Total Revenue Exposed": shock["revenue_exposure_formatted"],
                                 "Total Protected Value": shock["exposure_protected_formatted"]
                             },
-                            "explanation": f"{shock['lost_units']} unproduced inverter units breach contractual delivery SLAs across two core customer purchase orders, resulting in {shock['revenue_exposure_formatted']} revenue loss."
+                            "explanation": f"{shock['lost_units']} unproduced inverter units breach contractual delivery SLAs across two core customer purchase orders, resulting in {shock['revenue_exposure_formatted']} revenue exposure."
                         }
                     }
                 }
@@ -1312,7 +1312,7 @@ class FinancialEngine:
                     "net_benefit_formatted": f"₹{(res_a['exposure_protected'] - cost_a) / 100000:.2f}L",
                     "execution_speed": "Immediate (24 - 48 Hours)",
                     "mechanism": f"Offer 2.0% prompt-settlement discount to {f_cust}. Accelerates inflow to prevent cash breach.",
-                    "tradeoff": f"Small concession of {f'₹{cost_a:,.0f}'} completely shields {res_a['exposure_protected_formatted']} order deliveries.",
+                    "tradeoff": f"Small concession of {f'₹{cost_a:,.0f}'} protects 100% of {res_a['exposure_protected_formatted']} exposed order deliveries in this scenario.",
                     "is_recommended": True,
                     "optimization_status": "OPTIMAL",
                     "optimization_rationale": "Global Minimum Cost Solution among all candidates providing 100% exposure protection."
@@ -1381,7 +1381,7 @@ class FinancialEngine:
                 "net_benefit_formatted": f"₹{(res_a['exposure_protected'] - 48000.0) / 100000:.2f}L",
                 "execution_speed": "Immediate (24 - 48 Hours)",
                 "mechanism": "Offer 2.0% prompt-settlement discount to ABC Industries. Accelerates inflow from 29-Oct to 10-Oct.",
-                "tradeoff": "Requires ₹48K margin sacrifice, but completely preserves ₹31.0L in finished goods revenue (64.6x ROI).",
+                "tradeoff": "Requires ₹48K discount cost, protecting 100% of ₹31.0L exposed orders in this scenario (₹30.52L net value protected).",
                 "is_recommended": True,
                 "optimization_status": "OPTIMAL",
                 "optimization_rationale": "Global Minimum Cost Solution among all candidates satisfying 100% exposure protection and solvency."
@@ -1399,7 +1399,7 @@ class FinancialEngine:
                 "net_benefit_formatted": f"₹{res_b['exposure_protected'] / 100000:.2f}L",
                 "execution_speed": "3 - 5 Business Days",
                 "mechanism": "Negotiate a 7-day payment extension with Supplier X (from 14-Oct to 21-Oct) at 0% fee penalty.",
-                "tradeoff": "Zero direct monetary expense, but protects only ₹18.0L. Leaves 5 days of factory stockout and ₹13.0L residual order cancellations.",
+                "tradeoff": "Zero direct monetary expense, but protects only ₹18.0L. Leaves 5 days of factory stockout and ₹13.0L of exposed orders unprotected.",
                 "is_recommended": False,
                 "optimization_status": "INFEASIBLE (PARTIAL)",
                 "optimization_rationale": "Fails full coverage constraint (Coverage = 58.1% < 100%). Leaves ₹13.0L residual unmitigated enterprise exposure."
@@ -1417,7 +1417,7 @@ class FinancialEngine:
                 "net_benefit_formatted": f"₹{(res_c['exposure_protected'] - 110000.0) / 100000:.2f}L",
                 "execution_speed": "2 - 3 Business Days",
                 "mechanism": "Factor ABC Industries ₹24L invoice at 1.5% platform fee + 14% p.a. pro-rata for 30 days. Liquidity delivered Oct 9.",
-                "tradeoff": "Fully protects ₹31L, but incurs ₹1,10,000 financing fee (2.29x more expensive than Option A).",
+                "tradeoff": "Protects ₹31L of exposed orders, but incurs ₹1,10,000 financing fee (2.29x more expensive than Option A).",
                 "is_recommended": False,
                 "optimization_status": "SUBOPTIMAL",
                 "optimization_rationale": "Satisfies 100% protection constraint but is strictly dominated by Option A on cost (₹1.10L vs ₹48K)."
@@ -1451,8 +1451,8 @@ class FinancialEngine:
             cs = self.custom_state
             evidence = [
                 f"Customer {cs['focal_customer_name']} accounts for an upcoming scheduled inflow of ₹{cs['focal_invoice_amt']:,.0f}.",
-                f"Historical payment turnaround model indicates significant payment delay deceleration.",
-                f"Payment delay trend model ({pred['formula']}) projects a {pred['predicted_delay_days']}-day delay with {pred['confidence_formatted']} risk confidence (R² = {pred['r_squared']})."
+                f"Based on a clear upward payment-delay trend across settled invoices ({' → '.join([str(s['delay_days']) + 'd' for s in pred['historical_samples']])}).",
+                f"Linear trend ({pred['formula']}) projects a {pred['predicted_delay_days']}-day delay with {pred['confidence_formatted']} risk confidence."
             ]
             impact = [
                 f"Liquidity Cascade: The ₹{cs['focal_invoice_amt'] / 100000:.1f}L delayed inflow could push operating cash to {metrics['projected_min_cash_formatted']}, breaching the {metrics['safety_threshold_formatted']} threshold.",
@@ -1474,7 +1474,7 @@ class FinancialEngine:
                 "impact": impact,
                 "action": [
                     f"RECOMMENDED ACTION: Deploy Option A — Early Payment Incentive ({opt_a['cost_formatted']}).",
-                    f"Full Protection: Secures 100% of the {shock['revenue_exposure_formatted']} order backlog at lowest feasible expenditure.",
+                    f"Full Protection: Protects 100% of the {shock['revenue_exposure_formatted']} exposed order backlog in this scenario ({opt_a['net_benefit_formatted']} net value protected).",
                     f"Implementation: Dispatch settlement terms notice to {cs['focal_customer_name']} Treasury."
                 ],
                 "math_summary": {
@@ -1491,8 +1491,8 @@ class FinancialEngine:
         # Benchmark Memo
         evidence = [
             f"Customer ABC Industries accounts for an upcoming scheduled inflow of ₹{self.focal_invoice_amt:,.0f} on 08-Oct-2026 (48.2% of first-half collections).",
-            f"Rolling delay telemetry shows payment turnaround deteriorating across historical invoices ({', '.join([str(s['delay_days']) + 'd' for s in pred['historical_samples']])}).",
-            f"Payment delay trend model ({pred['formula']}) projects a {pred['predicted_delay_days']}-day payment delay to 29-Oct-2026 with {pred['confidence_formatted']} risk confidence (R² = {pred['r_squared']})."
+            f"Based on a clear upward payment-delay trend across the last 3 settled invoices ({' → '.join([str(s['delay_days']) + 'd' for s in pred['historical_samples']])}).",
+            f"Linear trend ({pred['formula']}) projects a {pred['predicted_delay_days']}-day payment delay to 29-Oct-2026 with {pred['confidence_formatted']} risk confidence."
         ]
 
         impact = [
@@ -1506,19 +1506,19 @@ class FinancialEngine:
             action = [
                 "ACTIVE INTERVENTION: Option A (Early Payment Incentive) is applied.",
                 f"Executing a 2.0% prompt settlement discount (₹{metrics['intervention_cost']:,.0f}) accelerates the ₹24L collection to 10-Oct-2026.",
-                f"Working capital buffer is maintained safely above ₹15L, fully protecting the {shock['exposure_protected_formatted']} order backlog for a net financial gain of {metrics['net_savings_formatted']} (64.6x ROI)."
+                f"Working capital buffer is maintained safely above ₹15L, protecting 100% of the {shock['exposure_protected_formatted']} exposed orders in this scenario ({metrics['net_savings_formatted']} net value protected)."
             ]
         elif active_intervention == "OPTION_B":
             action = [
                 "ACTIVE INTERVENTION: Option B (Supplier Payment Rescheduling) is applied.",
                 "Negotiated a 7-day payment extension with Supplier X at zero direct fee cost.",
-                f"Reduces factory downtime from 12 days to {shock['stockout_days']} days, protecting {shock['exposure_protected_formatted']} of revenue but leaving {shock['revenue_exposure_formatted']} of customer orders at cancellation risk."
+                f"Reduces factory downtime from 12 days to {shock['stockout_days']} days, protecting {shock['exposure_protected_formatted']} of revenue but leaving {shock['revenue_exposure_formatted']} of customer orders exposed."
             ]
         elif active_intervention == "OPTION_C":
             action = [
                 "ACTIVE INTERVENTION: Option C (Short-Term Invoice Financing) is applied.",
-                f"Factoring the ₹24L invoice on 09-Oct injects immediate working capital, protecting 100% of the {shock['exposure_protected_formatted']} revenue exposure.",
-                f"Incurs a financing fee of ₹{metrics['intervention_cost']:,.0f}, delivering {metrics['net_savings_formatted']} in net benefit (viable, but mathematically dominated by Option A)."
+                f"Factoring the ₹24L invoice on 09-Oct injects immediate working capital, protecting 100% of the {shock['exposure_protected_formatted']} exposed orders in this scenario.",
+                f"Incurs a financing fee of ₹{metrics['intervention_cost']:,.0f}, delivering {metrics['net_savings_formatted']} net value protected (viable, but dominated by Option A)."
             ]
         else:
             action = [

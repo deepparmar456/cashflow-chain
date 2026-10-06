@@ -38,7 +38,7 @@ export default function InterventionSimulator() {
         {/* Dynamic Net Savings Indicator */}
         <div className="flex items-center gap-3 p-3.5 rounded-xl bg-slate-50 border border-slate-200 shrink-0">
           <div>
-            <span className="text-[10px] font-semibold text-slate-500 block uppercase">Net Value Saved</span>
+            <span className="text-[10px] font-semibold text-slate-500 block uppercase">Net Value Protected</span>
             <span className={`text-xl font-bold font-mono ${
               activeIntervention === 'OPTION_A' ? 'text-emerald-700' : (activeIntervention === 'OPTION_C' ? 'text-blue-700' : (activeIntervention === 'OPTION_B' ? 'text-amber-700' : 'text-slate-500'))
             }`}>
@@ -105,7 +105,7 @@ export default function InterventionSimulator() {
                   <div className="flex items-center justify-between py-1 border-b border-slate-100">
                     <span className="text-slate-500 font-sans">Revenue Protected:</span>
                     <span className="font-bold text-emerald-700 text-sm">
-                      {opt.revenue_protected_formatted || opt.exposure_protected_formatted} ({opt.protection_pct ?? opt.coverage_pct ?? 100}%)
+                      {opt.revenue_protected_formatted || opt.exposure_protected_formatted} ({opt.protection_pct ?? opt.coverage_pct ?? 100}% in this scenario)
                     </span>
                   </div>
 
@@ -117,7 +117,7 @@ export default function InterventionSimulator() {
                   </div>
 
                   <div className="flex items-center justify-between py-1">
-                    <span className="text-slate-500 font-sans">Net Value Saved:</span>
+                    <span className="text-slate-500 font-sans">Net Value Protected:</span>
                     <span className="font-bold text-emerald-800">
                       {opt.net_benefit_formatted}
                     </span>
@@ -171,11 +171,11 @@ export default function InterventionSimulator() {
           <div className="mt-3 pt-3 border-t border-slate-100 text-xs font-mono text-slate-700 space-y-1.5">
             <div className="flex items-center gap-2">
               <Target className="w-4 h-4 text-blue-600 shrink-0" />
-              <span><strong>Selection Rule:</strong> <code>min Cost(a) subject to RevenueProtected(a) == ₹31.0L (100%)</code></span>
+              <span><strong>Selection Rule:</strong> <code>min Cost(a) subject to RevenueProtected(a) == ₹31.0L (100% in this scenario)</code></span>
             </div>
-            <div>• <strong>Option A (Early Payment Incentive):</strong> Costs ₹48,000 (2% of ₹24.0L), protects 100% (₹31.0L), 64.6x ROI.</div>
-            <div>• <strong>Option B (Supplier Rescheduling):</strong> Rejected because it only protects 58.1% (₹18.0L), leaving ₹13.0L of customer orders lost.</div>
-            <div>• <strong>Option C (Invoice Financing):</strong> Protects 100% (₹31.0L), but costs ₹1,10,000 (2.29x more expensive than Option A).</div>
+            <div>• <strong>Option A (Early Payment Incentive):</strong> Costs ₹48,000 (2% of ₹24.0L), protects 100% in this scenario (₹31.0L), yielding ₹30.52L net value protected.</div>
+            <div>• <strong>Option B (Supplier Rescheduling):</strong> Rejected because it only protects 58.1% (₹18.0L), leaving ₹13.0L of customer orders exposed.</div>
+            <div>• <strong>Option C (Invoice Financing):</strong> Protects 100% in this scenario (₹31.0L), but costs ₹1,10,000 (2.29x more expensive than Option A).</div>
           </div>
         )}
       </div>

@@ -102,7 +102,7 @@ export default function LandingOverview() {
             </div>
             <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono text-slate-500">
               <span>Expected Payment Delay</span>
-              <span className="font-bold text-rose-600">+{delayDays} Days (87% conf.)</span>
+              <span className="font-bold text-rose-600">+{delayDays} Days (87% risk conf.)</span>
             </div>
           </div>
 
@@ -141,12 +141,12 @@ export default function LandingOverview() {
                 Here&apos;s the best response.
               </h2>
               <p className="text-sm text-slate-600 leading-relaxed">
-                Compares available options and recommends the lowest-cost fix: a <strong className="text-emerald-700">₹48,000</strong> early-payment discount that protects <strong className="text-emerald-700">100% ({exposure})</strong> of revenue.
+                Compares available options and recommends the lowest-cost fix: a <strong className="text-emerald-700">₹48,000</strong> early-payment discount that protects <strong className="text-emerald-700">100% ({exposure})</strong> of exposed orders in this scenario.
               </p>
             </div>
             <div className="pt-3 border-t border-emerald-200/70 flex items-center justify-between text-xs font-mono text-emerald-800">
               <span>Best Action</span>
-              <span className="font-bold text-emerald-700">₹48K saves {exposure} (64.6x ROI)</span>
+              <span className="font-bold text-emerald-700">₹30.52L net value protected</span>
             </div>
           </div>
         </div>
@@ -164,7 +164,7 @@ export default function LandingOverview() {
             ABC Industries may receive a ₹24L payment 21 days late.
           </h3>
           <p className="text-sm text-slate-300 max-w-xl">
-            Walk through the live scenario step-by-step: see why it happens, what it breaks next, and how the best response prevents ₹31L in lost orders.
+            Walk through the live scenario step-by-step: see why it happens, what it breaks next, and how a ₹48,000 action protects ₹31L of exposed orders.
           </p>
         </div>
 
@@ -213,7 +213,7 @@ export default function LandingOverview() {
               <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-200 space-y-1.5">
                 <h4 className="font-bold text-blue-950">3. CashFlow Chain (Our Approach)</h4>
                 <p className="text-xs text-slate-700 leading-relaxed">
-                  <strong>Connects finance to operations.</strong> Predicts the delay, traces the 6-step domino effect, and calculates the lowest-cost fix.
+                  <strong>Connects finance to operations.</strong> Spots the payment-delay trend, traces the 6-step domino effect, and calculates the lowest-cost fix.
                 </p>
               </div>
             </div>
@@ -232,8 +232,8 @@ export default function LandingOverview() {
                 <span className="font-bold text-rose-600">{minCash} (Oct 14)</span>
               </div>
               <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
-                <span className="text-emerald-700 block">Best Action Net Savings</span>
-                <span className="font-bold text-emerald-800">+₹30.52L (64.6x ROI)</span>
+                <span className="text-emerald-700 block">Net Value Protected</span>
+                <span className="font-bold text-emerald-800">₹30.52L net value protected</span>
               </div>
             </div>
           </div>
