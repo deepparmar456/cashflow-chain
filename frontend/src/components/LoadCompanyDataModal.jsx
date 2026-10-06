@@ -232,7 +232,7 @@ export default function LoadCompanyDataModal() {
                 </span>
               </div>
               <p className="text-xs text-slate-500 mt-0.5">
-                Upload a 5-file SME financial data pack to solve a live second-order cascade, or restore the canonical Apex benchmark scenario.
+                Upload a 5-file SME financial data pack, or restore the default ABC Industries demo scenario.
               </p>
             </div>
           </div>
@@ -507,58 +507,58 @@ export default function LoadCompanyDataModal() {
               )}
             </div>
 
-            {/* Column 2: Demo with Benchmark Company */}
+            {/* Column 2: Demo with Default ABC Scenario */}
             <div className="p-5 rounded-xl bg-slate-50 border border-slate-200 hover:border-slate-300 transition-all flex flex-col justify-between">
               <div>
                 <div className="flex items-center justify-between mb-2">
                   <div className="flex items-center gap-2">
                     <Building2 className="w-4 h-4 text-blue-600" />
                     <h3 className="text-xs font-bold text-slate-900 uppercase tracking-wide">
-                      Demo with Benchmark Company
+                      Default Demo Scenario
                     </h3>
                   </div>
                   <span className="text-[10px] font-mono text-blue-700 bg-blue-100/60 border border-blue-200 px-2 py-0.5 rounded font-semibold">
-                    Benchmark Scenario
+                    ABC Scenario
                   </span>
                 </div>
 
                 <p className="text-xs text-slate-600 mb-3.5 leading-relaxed">
-                  Canonical manufacturing benchmark engineered for high-precision institutional presentations and live judging.
+                  Default preloaded scenario showing how a 21-day late payment triggers a ₹31.0L order risk—and how to prevent it.
                 </p>
 
                 {/* Preloaded Scenario Details */}
                 <div className="space-y-2.5 p-4 rounded-xl bg-white border border-slate-200 shadow-sm text-xs">
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Company Name:</span>
-                    <span className="font-bold text-slate-900">Apex Components Ltd.</span>
+                    <span className="text-slate-500">Company / Scenario:</span>
+                    <span className="font-bold text-slate-900">ABC Industries</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Operating Cash:</span>
-                    <span className="font-mono font-bold text-blue-600">₹42.6L (Safety: ₹15.0L)</span>
+                    <span className="text-slate-500">Starting Cash:</span>
+                    <span className="font-mono font-bold text-blue-600">₹42.6L (Safe Limit: ₹15.0L)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Primary Inflow Shock:</span>
-                    <span className="font-mono font-bold text-rose-600">ABC Industries (₹24.0L / +21d)</span>
+                    <span className="text-slate-500">Expected Payment Delay:</span>
+                    <span className="font-mono font-bold text-rose-600">₹24.0L (+21 Days Late)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Risk Confidence:</span>
-                    <span className="font-mono font-semibold text-blue-700">87% (Delay Trend Model)</span>
+                    <span className="text-slate-500">Prediction Confidence:</span>
+                    <span className="font-mono font-semibold text-blue-700">87% (Growing Delay Trend)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Critical Supplier:</span>
-                    <span className="font-medium text-slate-700">Supplier X (₹12.0L on Day 14)</span>
+                    <span className="text-slate-500">Supplier Pressure:</span>
+                    <span className="font-medium text-slate-700">Supplier X (₹12.0L on Oct 14)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Production Outage:</span>
-                    <span className="font-mono font-bold text-rose-600">12 Days (SKU-IND-904)</span>
+                    <span className="text-slate-500">Inventory Impact:</span>
+                    <span className="font-mono font-bold text-rose-600">12-Day Stockout (SKU-IND-904)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Revenue Exposure:</span>
+                    <span className="text-slate-500">Orders at Risk:</span>
                     <span className="font-mono font-bold text-rose-600">₹31.0L (Orders SO-4021 &amp; SO-4029)</span>
                   </div>
                   <div className="flex items-center justify-between">
-                    <span className="text-slate-500">Optimal Countermeasure:</span>
-                    <span className="font-mono font-bold text-emerald-600">Option A: 2% Incentive (₹48,000)</span>
+                    <span className="text-slate-500">Best Action:</span>
+                    <span className="font-mono font-bold text-emerald-600">Option A: 2% Discount (₹48,000)</span>
                   </div>
                 </div>
               </div>
@@ -570,7 +570,7 @@ export default function LoadCompanyDataModal() {
                   className="w-full py-2.5 px-4 rounded-xl bg-white hover:bg-slate-100 border border-slate-300 text-slate-700 hover:text-slate-900 font-bold text-xs flex items-center justify-center gap-2 transition-all cursor-pointer shadow-sm"
                 >
                   <Layers className="w-4 h-4 text-blue-600" />
-                  <span>LOAD BENCHMARK DEMO SCENARIO</span>
+                  <span>LOAD DEFAULT ABC DEMO SCENARIO</span>
                 </button>
               </div>
             </div>

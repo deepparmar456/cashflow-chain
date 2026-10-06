@@ -143,7 +143,7 @@ export async function resetBenchmarkScenario() {
     return await res.json();
   } catch (err) {
     console.warn('Backend unavailable, reset locally:', err);
-    return { success: true, company_name: 'Apex Components Ltd.', mode: 'BENCHMARK' };
+    return { success: true, company_name: 'ABC Industries', mode: 'BENCHMARK' };
   }
 }
 
@@ -153,7 +153,7 @@ export async function fetchDatapackStatus() {
     if (!res.ok) throw new Error(`HTTP error! status: ${res.status}`);
     return await res.json();
   } catch (err) {
-    return { company_name: 'Apex Components Ltd.', mode: 'BENCHMARK', is_custom: false };
+    return { company_name: 'ABC Industries', mode: 'BENCHMARK', is_custom: false };
   }
 }
 

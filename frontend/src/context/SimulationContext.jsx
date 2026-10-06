@@ -53,7 +53,7 @@ export function SimulationProvider({ children }) {
   const [guidedStep, setGuidedStep] = useState(1);
   const [loading, setLoading] = useState(false);
   const [showLoadCompanyModal, setShowLoadCompanyModal] = useState(false);
-  const [activeCompany, setActiveCompany] = useState('Apex Components Ltd.');
+  const [activeCompany, setActiveCompany] = useState('ABC Industries');
   const [refreshTrigger, setRefreshTrigger] = useState(0);
 
   // Core Data
@@ -74,7 +74,7 @@ export function SimulationProvider({ children }) {
     } catch (e) {
       console.warn('Failed to call resetBenchmarkScenario:', e);
     }
-    setActiveCompany('Apex Components Ltd.');
+    setActiveCompany('ABC Industries');
     setActiveIntervention('NONE');
     setSelectedNode(null);
     setDemoStep(1);

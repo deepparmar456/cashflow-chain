@@ -75,7 +75,7 @@ def get_datapack_status():
         "company_name": engine.company_name,
         "mode": engine.mode,
         "is_custom": engine.is_custom,
-        "benchmark_company": "Apex Components Ltd."
+        "benchmark_company": "ABC Industries"
     }
 
 

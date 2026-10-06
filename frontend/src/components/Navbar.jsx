@@ -48,9 +48,8 @@ export default function Navbar() {
           {/* Subtle Scenario Label */}
           <div className="hidden xl:flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-slate-100 text-[11px] font-medium text-slate-600 border border-slate-200">
             <span className="w-1.5 h-1.5 rounded-full bg-emerald-500" />
-            <span className="font-semibold text-slate-800">{activeCompany || 'Apex Components'}</span>
-            <span className="text-slate-300">•</span>
-            <span className="text-slate-500">Default Scenario: ABC Industries</span>
+            <span className="text-slate-500">Default Scenario:</span>
+            <span className="font-semibold text-slate-800">{activeCompany || 'ABC Industries'}</span>
           </div>
         </div>
 

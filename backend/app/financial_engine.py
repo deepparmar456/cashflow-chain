@@ -43,24 +43,24 @@ class FinancialEngine:
         self.focal_invoice_amt = 2400000.0   # ₹24.0L
         self.supplier_x_amt = 1200000.0      # ₹12.0L due on Day 14
         
-        # Operational Mode: "BENCHMARK" (Apex Components Ltd.) or "CUSTOM" (Uploaded SME Data Pack)
+        # Operational Mode: "BENCHMARK" (ABC Industries) or "CUSTOM" (Uploaded SME Data Pack)
         self.mode = "BENCHMARK"
-        self.company_name = "Apex Components Ltd."
+        self.company_name = "ABC Industries"
         self.is_custom = False
         self.custom_state: Optional[Dict[str, Any]] = None
 
     def reset_benchmark(self) -> Dict[str, Any]:
         """
-        Restores the canonical Apex Components benchmark scenario.
+        Restores the canonical ABC Industries benchmark scenario.
         """
         self.mode = "BENCHMARK"
-        self.company_name = "Apex Components Ltd."
+        self.company_name = "ABC Industries"
         self.is_custom = False
         self.custom_state = None
         return {
             "success": True,
-            "message": "Benchmark scenario (Apex Components Ltd.) successfully restored.",
-            "company_name": "Apex Components Ltd.",
+            "message": "Benchmark scenario (ABC Industries) successfully restored.",
+            "company_name": "ABC Industries",
             "mode": "BENCHMARK"
         }
 

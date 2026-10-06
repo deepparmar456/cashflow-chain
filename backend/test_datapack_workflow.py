@@ -114,13 +114,13 @@ assert memo['math_summary']['revenue_exposure'] == '₹25.0L'
 print("✓ TEST 4 PASSED: Endpoints all dynamically derive from uploaded custom dataset.")
 
 # TEST 5: Reset Benchmark Scenario
-print("\n[TEST 5] Restoring Canonical Benchmark Scenario (Apex Components Ltd.)...")
+print("\n[TEST 5] Restoring Canonical Benchmark Scenario (ABC Industries)...")
 status, res = post_json('/api/reset-benchmark', {})
 print(f"Status Code: {status}")
 print(f"Restored Company: {res.get('company_name')}")
 print(f"Mode: {res.get('mode')}")
 assert status == 200
-assert res.get('company_name') == 'Apex Components Ltd.'
+assert res.get('company_name') == 'ABC Industries'
 assert res.get('mode') == 'BENCHMARK'
 
 _, benchmark_metrics = get_json('/api/metrics')

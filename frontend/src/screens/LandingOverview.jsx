@@ -220,8 +220,8 @@ export default function LandingOverview() {
 
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 font-mono text-xs">
               <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
-                <span className="text-slate-500 block">Company</span>
-                <span className="font-bold text-slate-900">{activeCompany || 'Apex Components Ltd.'}</span>
+                <span className="text-slate-500 block">Default Scenario</span>
+                <span className="font-bold text-slate-900">{activeCompany || 'ABC Industries'}</span>
               </div>
               <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
                 <span className="text-slate-500 block">Starting Cash / Safety Floor</span>
