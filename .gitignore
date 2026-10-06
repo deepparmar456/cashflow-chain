@@ -24,3 +24,7 @@ cloudflared.exe
 Thumbs.db
 *.tmp
 .system_generated/
+
+# Local submission artifacts excluded from remote repo
+CashFlow_Chain.zip
+PROJECT_REPORT.html
