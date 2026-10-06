@@ -8,7 +8,7 @@ This document explains how judges and evaluators access the full **CashFlow Chai
 
 The entire full-stack application (frontend + predictive ML engine + CSV ingestion) is currently live on a secure Cloudflare HTTPS tunnel:
 
-👉 **[https://cookie-export-functionality-surely.trycloudflare.com](https://cookie-export-functionality-surely.trycloudflare.com)**
+👉 **[https://cashflow-chain.onrender.com/](https://cashflow-chain.onrender.com/)**
 
 - **No login or IP bypass required**: Any browser, phone, or evaluator can open this link directly.
 - **Unified Engine**: Both the React UI and the FastAPI REST endpoints are served on this single URL.

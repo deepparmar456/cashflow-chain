@@ -76,7 +76,7 @@ This automatically starts:
 
 ### Option 2: Live Public Web App (No Local Setup Required)
 You can directly open and test the application online from any device:
-🌐 **Live Public URL:** https://shuttle-conferencing-specifics-wisconsin.trycloudflare.com
+🌐 **Live Public URL:** https://cashflow-chain.onrender.com/
 *(Includes full interactive React Flow graph, live financial recalculations, and API proxying)*
 
 ---

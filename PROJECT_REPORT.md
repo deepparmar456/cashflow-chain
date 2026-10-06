@@ -5,7 +5,7 @@
 **Category:** FinTech / AI Decision Intelligence / Supply Chain Resilience  
 **Author:** Harsh Parmar & Team  
 **Date:** September 2026  
-**Live Public Prototype:** [https://cookie-export-functionality-surely.trycloudflare.com](https://cookie-export-functionality-surely.trycloudflare.com)  
+**Live Public Prototype:** [https://cashflow-chain.onrender.com/](https://cashflow-chain.onrender.com/)  
 **Local Engine:** `http://localhost:8000` (FastAPI + React Production Build)  
 
 ---
