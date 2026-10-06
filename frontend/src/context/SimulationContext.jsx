@@ -23,25 +23,25 @@ export const SCREENS = {
 };
 
 export const GUIDED_STAGES = [
-  { id: 1, key: 'PREDICT', title: 'Predict', short: '01 Predict', subtitle: 'Payment Delay Shock' },
-  { id: 2, key: 'TRACE', title: 'Trace', short: '02 Trace', subtitle: 'Second-Order Cascade' },
-  { id: 3, key: 'SIMULATE', title: 'Simulate', short: '03 Simulate', subtitle: 'Intervention Evaluation' },
-  { id: 4, key: 'PREVENT', title: 'Prevent', short: '04 Prevent', subtitle: 'Cascade Neutralization' },
-  { id: 5, key: 'VERDICT', title: 'Verdict', short: '05 Verdict', subtitle: 'Decision & Value Return' }
+  { id: 1, key: 'PREDICT', title: '01 Predict', label: 'Predict', story: 'Something might go wrong.', subtitle: 'Expected Payment Delay' },
+  { id: 2, key: 'TRACE', title: '02 Trace', label: 'Trace', story: 'Here’s what it could break.', subtitle: 'What Happens Next' },
+  { id: 3, key: 'COMPARE', title: '03 Compare', label: 'Compare', story: 'Here are the options.', subtitle: 'Compare Responses' },
+  { id: 4, key: 'PREVENT', title: '04 Prevent', label: 'Prevent', story: 'Here’s the best response.', subtitle: 'Best Action Applied' },
+  { id: 5, key: 'VERDICT', title: '05 Verdict', label: 'Verdict', story: 'Here’s the outcome.', subtitle: 'Final Outcome' }
 ];
 
 export const DEMO_STEPS = [
-  { step: 1, screen: SCREENS.COMMAND_CENTER, title: "1. Open Command Center", action: "Review Macro Health & Cash Position" },
-  { step: 2, screen: SCREENS.COMMAND_CENTER, title: "2. Inspect Healthy Baseline", action: "Note ₹42.6L Cash & ₹21.2L Baseline Min" },
-  { step: 3, screen: SCREENS.COMMAND_CENTER, title: "3. Spot the Chain Alert", action: "Click 'TRACE IMPACT' on ABC Industries Alert" },
-  { step: 4, screen: SCREENS.CUSTOMER_RISK, title: "4. Customer Risk Deep-Dive", action: "Analyze ABC ₹24L Inflow & 21-Day Delay Signals" },
-  { step: 5, screen: SCREENS.CUSTOMER_RISK, title: "5. Trigger Cascade Simulation", action: "Click 'SIMULATE CASCADE' to Launch Graph" },
-  { step: 6, screen: SCREENS.IMPACT_CHAIN, title: "6. Interactive Dependency Graph", action: "Trace 6-Node Chain from Buffer to Supplier X" },
-  { step: 7, screen: SCREENS.IMPACT_CHAIN, title: "7. Verify Underlying Math", action: "Click Nodes to Inspect Exact Formular & Invoices" },
-  { step: 8, screen: SCREENS.INTERVENTIONS, title: "8. Open Intervention Simulator", action: "Compare Scenarios A, B, and C" },
-  { step: 9, screen: SCREENS.INTERVENTIONS, title: "9. Apply Recommended Option A", action: "Click Early Payment Incentive (Cost: ₹48K)" },
-  { step: 10, screen: SCREENS.IMPACT_CHAIN, title: "10. Observe Cascade Prevention", action: "Watch All 6 Nodes Turn Green (₹31L Protected)" },
-  { step: 11, screen: SCREENS.EXECUTIVE_MEMO, title: "11. Review C-Suite Executive Memo", action: "Evidence → Impact → Action Decision Briefing" }
+  { step: 1, screen: SCREENS.COMMAND_CENTER, title: "1. Overview", action: "Something might go wrong: See current cash & risk alert" },
+  { step: 2, screen: SCREENS.COMMAND_CENTER, title: "2. Cash Pressure", action: "Compare ₹42.6L starting cash vs ₹6.6L lowest projected cash" },
+  { step: 3, screen: SCREENS.COMMAND_CENTER, title: "3. Payment Alert", action: "Click 'See What Happens Next' on the ABC alert" },
+  { step: 4, screen: SCREENS.CUSTOMER_RISK, title: "4. Expected Payment Delay", action: "Review ₹24L late payment & 21-day expected delay" },
+  { step: 5, screen: SCREENS.CUSTOMER_RISK, title: "5. Trace the Chain", action: "Click 'See What Happens Next' to open the impact map" },
+  { step: 6, screen: SCREENS.IMPACT_CHAIN, title: "6. How the Problem Spreads", action: "Follow the 6 steps from late payment to ₹31L revenue at risk" },
+  { step: 7, screen: SCREENS.IMPACT_CHAIN, title: "7. Inspect Details", action: "Click any card to view the exact numbers & formula" },
+  { step: 8, screen: SCREENS.INTERVENTIONS, title: "8. Compare Options", action: "Compare Options A, B, and C side by side" },
+  { step: 9, screen: SCREENS.INTERVENTIONS, title: "9. Apply Best Action", action: "Select Option A: Early Payment Incentive (₹48,000 cost)" },
+  { step: 10, screen: SCREENS.IMPACT_CHAIN, title: "10. Problem Prevented", action: "Watch all 6 steps turn green (₹31L revenue protected)" },
+  { step: 11, screen: SCREENS.EXECUTIVE_MEMO, title: "11. Summary Report", action: "Review the complete business summary & outcome" }
 ];
 
 export function SimulationProvider({ children }) {
@@ -141,11 +141,13 @@ export function SimulationProvider({ children }) {
     setActiveScreen(targetScreen);
   };
 
-  const handleSetGuidedStep = (step) => {
+  const handleSetGuidedStep = (step, interventionOverride = null) => {
     const clamped = Math.max(1, Math.min(5, step));
     setGuidedStep(clamped);
-    if (clamped >= 4) {
-      setActiveIntervention('OPTION_A');
+    if (interventionOverride) {
+      setActiveIntervention(interventionOverride);
+    } else if (clamped >= 4) {
+      setActiveIntervention(prev => (prev === 'NONE' ? 'OPTION_A' : prev));
     } else {
       setActiveIntervention('NONE');
     }

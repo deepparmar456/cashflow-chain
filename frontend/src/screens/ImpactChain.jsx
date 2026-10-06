@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useMemo, useState } from 'react';
 import {
   ReactFlow,
   Background,
@@ -10,19 +10,18 @@ import '@xyflow/react/dist/style.css';
 import { useSimulation, SCREENS } from '../context/SimulationContext';
 import CustomFinancialNode from '../components/flow/CustomFinancialNode';
 import NodeDetailsDrawer from '../components/flow/NodeDetailsDrawer';
-import { ShieldAlert, ShieldCheck, ArrowRight, Layers, HelpCircle, Sparkles } from 'lucide-react';
+import { ShieldAlert, ShieldCheck, ArrowRight, HelpCircle, ChevronDown, ChevronUp } from 'lucide-react';
 
 export default function ImpactChain() {
   const { impactChain, activeIntervention, setActiveScreen } = useSimulation();
+  const [showHowItSpreads, setShowHowItSpreads] = useState(false);
 
   const isProtected = activeIntervention === 'OPTION_A' || activeIntervention === 'OPTION_C';
-  const isPartial = activeIntervention === 'OPTION_B';
 
   const nodeTypes = useMemo(() => ({
     customFinancialNode: CustomFinancialNode
   }), []);
 
-  // Sync nodes and edges from simulation context
   const [nodes, setNodes, onNodesChange] = useNodesState(impactChain.nodes || []);
   const [edges, setEdges, onEdgesChange] = useEdgesState(impactChain.edges || []);
 
@@ -33,7 +32,7 @@ export default function ImpactChain() {
 
   return (
     <div className="relative w-full h-[calc(100vh-140px)] bg-slate-50 overflow-hidden flex flex-col font-sans">
-      {/* 1. HERO TOP STATUS BAR */}
+      {/* 1. TOP STATUS BAR (PLAIN BUSINESS LANGUAGE) */}
       <div className="z-10 px-6 py-3.5 bg-white/95 backdrop-blur-md border-b border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 shadow-xs">
         <div className="flex items-center gap-3">
           <div className={`flex items-center justify-center w-9 h-9 rounded-xl border ${
@@ -45,42 +44,64 @@ export default function ImpactChain() {
           </div>
           <div>
             <div className="flex items-center gap-2">
-              <h2 className="text-sm sm:text-base font-bold text-slate-900">
-                IMPACT CHAIN: SECOND-ORDER DEPENDENCY GRAPH
+              <h2 className="text-sm sm:text-base font-extrabold text-slate-900">
+                WHAT HAPPENS NEXT: HOW THE PROBLEM SPREADS
               </h2>
-              <span className="text-[10px] font-mono px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-semibold">
-                Interactive DAG
+              <span className="text-[10px] px-2 py-0.5 rounded bg-blue-50 text-blue-700 border border-blue-200 font-bold">
+                02 Trace • “Here’s what it could break.”
               </span>
             </div>
-            <p className="text-xs text-slate-500">
-              Click any node card to inspect underlying mathematical derivation and invoice parameters.
+            <p className="text-xs text-slate-600">
+              Late payment → Cash gap → Supplier pressure → Inventory impact → Orders at risk → Revenue exposed
             </p>
           </div>
         </div>
 
-        {/* Quick Exposure Summary & Action */}
+        {/* Right: Summary & Best Action CTA */}
         <div className="flex items-center gap-4">
+          <button
+            onClick={() => setShowHowItSpreads(!showHowItSpreads)}
+            className="hidden lg:inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>{showHowItSpreads ? 'Hide Details' : 'Why? / Details'}</span>
+            {showHowItSpreads ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+
           <div className="text-right">
-            <span className="text-[10px] font-semibold text-slate-500 block uppercase">Systemic Revenue at Stake</span>
+            <span className="text-[10px] font-semibold text-slate-500 block uppercase">
+              {isProtected ? 'Revenue Protected' : 'Orders at Risk (Revenue Exposed)'}
+            </span>
             <span className={`text-lg font-black font-mono tracking-tight ${
               isProtected ? 'text-emerald-600' : 'text-rose-600'
             }`}>
-              {isProtected ? '₹0.0L (Protected)' : '₹31.0L Exposure'}
+              {isProtected ? '₹31.0L (100% Protected)' : '₹31.0L Exposed'}
             </span>
           </div>
 
           <button
             onClick={() => setActiveScreen(SCREENS.INTERVENTIONS)}
-            className="flex items-center gap-1.5 px-4 py-2 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-all shrink-0 cursor-pointer"
+            className="flex items-center gap-1.5 px-4 py-2.5 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs transition-all shrink-0 cursor-pointer"
           >
-            <span>Intervention Simulator</span>
+            <span>Compare Best Actions</span>
             <ArrowRight className="w-3.5 h-3.5" />
           </button>
         </div>
       </div>
 
+      {/* Expandable Details Bar */}
+      {showHowItSpreads && (
+        <div className="z-10 px-6 py-2.5 bg-blue-50/80 border-b border-blue-200 text-xs font-mono text-slate-700 flex flex-wrap items-center justify-between gap-2">
+          <span><strong>Step-by-Step Math:</strong> ₹24.0L delayed (+21d) → Cash drops to ₹6.6L (Oct 14) → ₹12.0L Supplier X bill unpaid → 300kg raw material held (+16d) → 12-day stockout → ₹31.0L orders at risk.</span>
+          <span className="text-blue-700 font-semibold">Click any card below to inspect its exact formula</span>
+        </div>
+      )}
+
       {/* 2. INTERACTIVE REACT FLOW CANVAS */}
       <div className="relative flex-1 w-full h-full bg-slate-50">
+        <div className="absolute top-3 left-4 z-10 px-3 py-1 rounded-full bg-white/90 backdrop-blur border border-slate-200 text-[11px] font-medium text-slate-600 shadow-2xs">
+          💡 Click any card to view its plain explanation and underlying math
+        </div>
         <ReactFlow
           nodes={nodes}
           edges={edges}

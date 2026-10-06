@@ -1,14 +1,15 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSimulation, SCREENS } from '../context/SimulationContext';
 import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid, Legend
+  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid
 } from 'recharts';
 import {
-  AlertTriangle, ArrowRight, TrendingUp, ShieldAlert, CheckCircle2, DollarSign, Calendar, Clock, ArrowUpRight, Activity
+  ArrowRight, ShieldAlert, CheckCircle2, HelpCircle, ChevronDown, ChevronUp, Play
 } from 'lucide-react';
 
 export default function CommandCenter() {
-  const { metrics, timeline, setActiveScreen, activeIntervention, customerRisk } = useSimulation();
+  const { metrics, timeline, setActiveScreen, activeIntervention, customerRisk, startGuidedDemo } = useSimulation();
+  const [showChartDetails, setShowChartDetails] = useState(false);
 
   const isProtected = activeIntervention === 'OPTION_A' || activeIntervention === 'OPTION_C';
 
@@ -35,7 +36,6 @@ export default function CommandCenter() {
     };
   }, [timeline]);
 
-  // Clean custom chart tooltip
   const CustomTooltip = ({ active, payload, label }) => {
     if (active && payload && payload.length) {
       return (
@@ -48,7 +48,7 @@ export default function CommandCenter() {
             </div>
           ))}
           <div className="mt-1 pt-1 border-t border-slate-100 text-[10px] text-amber-700 font-medium">
-            Safety Floor: ₹15.0L
+            Minimum Safe Cash: ₹15.0L
           </div>
         </div>
       );
@@ -57,7 +57,7 @@ export default function CommandCenter() {
   };
 
   return (
-    <div className="max-w-[1720px] mx-auto px-4 sm:px-6 py-6 space-y-6">
+    <div className="max-w-[1720px] mx-auto px-4 sm:px-6 py-6 space-y-6 font-sans">
       {/* 1. STATUS CALLOUT BANNER */}
       {!isProtected ? (
         <div className="relative overflow-hidden rounded-2xl border border-rose-300 bg-rose-50/70 p-5 sm:p-6 shadow-sm">
@@ -68,27 +68,37 @@ export default function CommandCenter() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-rose-600 text-white shadow-2xs">
-                    HIGH PRIORITY RISK
+                  <span className="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase bg-rose-600 text-white shadow-2xs">
+                    RISK LEVEL: HIGH
                   </span>
-                  <span className="text-xs text-rose-800 font-semibold font-mono">Cascading Liquidity Threat</span>
+                  <span className="text-xs text-rose-800 font-semibold">“Something might go wrong.”</span>
                 </div>
                 <h2 className="mt-1.5 text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                  CASHFLOW CHAIN DETECTED
+                  {customerRisk?.name || 'ABC Industries'} may receive a {customerRisk?.outstanding_formatted || '₹24.0L'} payment {customerRisk?.predicted_delay_days || 21} days late.
                 </h2>
                 <p className="mt-1 text-sm text-slate-700">
-                  <strong className="text-slate-900">{customerRisk?.name || 'ABC Industries'}</strong> — predicted <span className="text-rose-700 font-semibold underline decoration-rose-400 underline-offset-4">21-day payment delay</span> could push projected liquidity to <span className="text-rose-700 font-bold">{metrics?.projected_min_cash_formatted || inflectionPoint.formatted}</span> and trigger a ₹12L supplier payment hold.
+                  This expected payment delay pushes cash down to <span className="text-rose-700 font-bold">{metrics?.projected_min_cash_formatted || inflectionPoint.formatted}</span> (below the ₹15.0L safe limit), freezing a ₹12.0L supplier payment and putting <span className="text-rose-700 font-bold">{metrics?.revenue_exposure_formatted || '₹31.0L'}</span> of customer orders at risk.
                 </p>
               </div>
             </div>
 
-            <button
-              onClick={() => setActiveScreen(SCREENS.CUSTOMER_RISK)}
-              className="flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm hover:shadow transition-all shrink-0 cursor-pointer"
-            >
-              <span>TRACE IMPACT</span>
-              <ArrowRight className="w-4 h-4" />
-            </button>
+            <div className="flex flex-wrap items-center gap-2.5 shrink-0">
+              <button
+                onClick={() => startGuidedDemo(1)}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all cursor-pointer"
+              >
+                <Play className="w-3.5 h-3.5 fill-current" />
+                <span>START GUIDED DEMO</span>
+              </button>
+
+              <button
+                onClick={() => setActiveScreen(SCREENS.CUSTOMER_RISK)}
+                className="flex items-center gap-2 px-5 py-3 rounded-xl text-xs font-bold bg-rose-600 hover:bg-rose-700 text-white shadow-sm transition-all cursor-pointer"
+              >
+                <span>SEE EXPECTED DELAY</span>
+                <ArrowRight className="w-4 h-4" />
+              </button>
+            </div>
           </div>
         </div>
       ) : (
@@ -100,16 +110,16 @@ export default function CommandCenter() {
               </div>
               <div>
                 <div className="flex items-center gap-2">
-                  <span className="px-2.5 py-0.5 rounded text-[11px] font-mono font-bold uppercase bg-emerald-600 text-white shadow-2xs">
-                    COUNTERMEASURE APPLIED
+                  <span className="px-2.5 py-0.5 rounded text-[11px] font-bold uppercase bg-emerald-600 text-white shadow-2xs">
+                    BEST ACTION APPLIED
                   </span>
-                  <span className="text-xs text-emerald-800 font-semibold font-mono">Cascade Fully Neutralized</span>
+                  <span className="text-xs text-emerald-800 font-semibold">“Here’s the outcome.”</span>
                 </div>
                 <h2 className="mt-1.5 text-xl sm:text-2xl font-extrabold text-slate-900 tracking-tight">
-                  WORKING CAPITAL RESILIENCE RESTORED
+                  Cash Protected &amp; All Customer Orders Saved
                 </h2>
                 <p className="mt-1 text-sm text-slate-700">
-                  Early Payment Incentive secured ₹24L inflow on Oct 10. ₹31.0L in finished goods revenue is 100% protected.
+                  Early Payment Incentive brings in ₹24.0L on Oct 10 for a ₹48,000 discount. All ₹31.0L in customer orders are 100% protected.
                 </p>
               </div>
             </div>
@@ -117,27 +127,27 @@ export default function CommandCenter() {
               onClick={() => setActiveScreen(SCREENS.IMPACT_CHAIN)}
               className="flex items-center gap-2 px-5 py-2.5 rounded-xl text-sm font-semibold bg-emerald-600 hover:bg-emerald-700 text-white transition-colors cursor-pointer shrink-0 shadow-xs"
             >
-              <span>Inspect Dependency Graph</span>
+              <span>See Protected Chain</span>
               <ArrowRight className="w-4 h-4" />
             </button>
           </div>
         </div>
       )}
 
-      {/* 2. TOP METRICS STRIP (LIGHT CLEAN CARDS) */}
+      {/* 2. TOP METRICS STRIP (PLAIN BUSINESS LANGUAGE) */}
       <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Current Liquidity</span>
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Current Cash Balance</span>
           <div className="mt-1 text-3xl font-extrabold font-mono text-slate-900">
             {metrics?.current_cash_position_formatted || '₹42.6L'}
           </div>
-          <span className="text-xs text-slate-500 mt-1 block">Contractual Baseline Cash</span>
+          <span className="text-xs text-slate-500 mt-1 block">Starting operating cash on hand</span>
         </div>
 
         <div className={`p-5 rounded-2xl border shadow-sm ${
           isProtected ? 'bg-emerald-50/50 border-emerald-200' : 'bg-rose-50/50 border-rose-200'
         }`}>
-          <span className="text-xs font-semibold uppercase tracking-wider block text-slate-600">Stress Min Cash</span>
+          <span className="text-xs font-semibold uppercase tracking-wider block text-slate-600">Cash Pressure (Lowest Cash)</span>
           <div className={`mt-1 text-3xl font-extrabold font-mono ${
             isProtected ? 'text-emerald-700' : 'text-rose-600'
           }`}>
@@ -146,60 +156,62 @@ export default function CommandCenter() {
           <span className={`text-xs mt-1 block font-medium ${
             isProtected ? 'text-emerald-700' : 'text-rose-700'
           }`}>
-            {isProtected ? 'Safely Above ₹15.0L Floor' : 'Breaches ₹15.0L Floor on Oct 14'}
+            {isProtected ? 'Safely Above ₹15.0L Minimum' : 'Drops Below ₹15.0L Safe Limit on Oct 14'}
           </span>
         </div>
 
         <div className="p-5 rounded-2xl bg-white border border-slate-200/80 shadow-sm">
-          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Receivable Inflow Shock</span>
+          <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Expected Payment Delay</span>
           <div className="mt-1 text-3xl font-extrabold font-mono text-amber-600">
             {customerRisk?.outstanding_formatted || '₹24.0L'}
           </div>
-          <span className="text-xs text-slate-500 mt-1 block">ABC Industries (+21 Days Delayed)</span>
+          <span className="text-xs text-slate-500 mt-1 block">ABC Industries (+{customerRisk?.predicted_delay_days || 21} Days Late)</span>
         </div>
 
         <div className={`p-5 rounded-2xl border shadow-sm ${
           isProtected ? 'bg-emerald-50/50 border-emerald-200' : 'bg-white border-slate-200/80'
         }`}>
-          <span className="text-xs font-semibold uppercase tracking-wider block text-slate-500">Revenue at Stake</span>
+          <span className="text-xs font-semibold uppercase tracking-wider block text-slate-500">
+            {isProtected ? 'Revenue Protected' : 'Orders at Risk (Revenue Exposed)'}
+          </span>
           <div className={`mt-1 text-3xl font-extrabold font-mono ${
-            isProtected ? 'text-emerald-700' : 'text-slate-900'
+            isProtected ? 'text-emerald-700' : 'text-rose-600'
           }`}>
-            {isProtected ? '₹0.0L' : metrics?.revenue_exposure_formatted || '₹31.0L'}
+            {isProtected ? '₹31.0L (100%)' : metrics?.revenue_exposure_formatted || '₹31.0L'}
           </div>
           <span className={`text-xs mt-1 block font-medium ${
             isProtected ? 'text-emerald-700' : 'text-rose-600'
           }`}>
-            {isProtected ? '100% Protected (Orders Saved)' : 'Downstream Order Cancellation Risk'}
+            {isProtected ? 'All Customer Orders Delivered On Time' : '2 Customer Orders Delayed by 12-Day Stockout'}
           </span>
         </div>
       </div>
 
-      {/* 3. 30-DAY CASHFLOW TIMELINE (RECHARTS LIGHT MODE) */}
+      {/* 3. 30-DAY CASHFLOW TIMELINE */}
       <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-4">
         <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
           <div>
             <h3 className="text-base font-bold text-slate-900">
-              30-Day Liquidity Projection Curve
+              30-Day Cash Balance Forecast
             </h3>
             <p className="text-xs text-slate-500">
-              Comparing Scheduled Baseline vs. Stress Delay vs. Active Countermeasure
+              Shows how the 21-day late payment pushes cash below the ₹15.0L safe limit—and how the best action fixes it.
             </p>
           </div>
-          <div className="flex items-center gap-4 text-xs font-mono">
+          <div className="flex flex-wrap items-center gap-4 text-xs font-mono">
             <span className="inline-flex items-center gap-1.5 text-blue-600 font-semibold">
-              <span className="w-3 h-1 bg-blue-600 rounded-full" /> Baseline Cash
+              <span className="w-3 h-1 bg-blue-600 rounded-full" /> Normal Plan (Paid on Time)
             </span>
             <span className="inline-flex items-center gap-1.5 text-rose-600 font-semibold">
-              <span className="w-3 h-1 bg-rose-600 rounded-full" /> Stress Delay
+              <span className="w-3 h-1 bg-rose-600 rounded-full" /> Cash Pressure (21d Late)
             </span>
             <span className="inline-flex items-center gap-1.5 text-amber-600 font-semibold">
-              <span className="w-3 h-0.5 border-t border-dashed border-amber-600" /> ₹15L Safety Floor
+              <span className="w-3 h-0.5 border-t border-dashed border-amber-600" /> ₹15L Safe Limit
             </span>
           </div>
         </div>
 
-        <div className="h-[360px] w-full pt-2">
+        <div className="h-[350px] w-full pt-2">
           <ResponsiveContainer width="100%" height="100%">
             <AreaChart data={timeline} margin={{ top: 10, right: 20, left: 0, bottom: 0 }}>
               <defs>
@@ -225,12 +237,12 @@ export default function CommandCenter() {
                 tickFormatter={(val) => `₹${(val / 100000).toFixed(0)}L`}
               />
               <Tooltip content={<CustomTooltip />} />
-              <ReferenceLine y={1500000} stroke="#f59e0b" strokeDasharray="4 4" strokeWidth={1.5} label={{ value: '₹15L Floor', fill: '#d97706', fontSize: 10, position: 'right' }} />
+              <ReferenceLine y={1500000} stroke="#f59e0b" strokeDasharray="4 4" strokeWidth={1.5} label={{ value: '₹15L Safe Limit', fill: '#d97706', fontSize: 10, position: 'right' }} />
 
               <Area
                 type="monotone"
                 dataKey="baseline_cash"
-                name="Baseline Inflow"
+                name="Normal Plan"
                 stroke="#3b82f6"
                 strokeWidth={2}
                 fillOpacity={1}
@@ -240,7 +252,7 @@ export default function CommandCenter() {
               <Area
                 type="monotone"
                 dataKey="stress_cash"
-                name="Stress Delay"
+                name="With 21-Day Delay"
                 stroke="#e11d48"
                 strokeWidth={2}
                 fillOpacity={1}
@@ -251,7 +263,7 @@ export default function CommandCenter() {
                 <Area
                   type="monotone"
                   dataKey="active_cash"
-                  name="Active Scenario"
+                  name="With Best Action"
                   stroke="#10b981"
                   strokeWidth={2.5}
                   fillOpacity={1}
@@ -260,6 +272,25 @@ export default function CommandCenter() {
               )}
             </AreaChart>
           </ResponsiveContainer>
+        </div>
+
+        {/* Expandable "Why? / Details" */}
+        <div className="pt-2 border-t border-slate-100">
+          <button
+            onClick={() => setShowChartDetails(!showChartDetails)}
+            className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+          >
+            <HelpCircle className="w-3.5 h-3.5" />
+            <span>{showChartDetails ? 'Hide Ledger Calculation Details' : 'Why? / How Daily Cash Numbers Are Calculated'}</span>
+            {showChartDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+          </button>
+          {showChartDetails && (
+            <div className="mt-2 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700 space-y-1">
+              <div>• <strong>Normal Plan Minimum:</strong> ₹21.2L on Oct 30 (always stays above the ₹15.0L safe limit).</div>
+              <div>• <strong>Cash Pressure Minimum (With 21d Delay):</strong> ₹6.6L on Oct 14 (falls ₹8.4L short of the ₹15.0L safe limit when Supplier X’s ₹12.0L bill comes due).</div>
+              <div>• <strong>With Best Action (Option A):</strong> ₹20.72L minimum on Oct 30 (2% early-payment discount brings in ₹23.52L on Oct 10).</div>
+            </div>
+          )}
         </div>
       </div>
     </div>

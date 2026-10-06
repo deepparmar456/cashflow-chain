@@ -1,38 +1,38 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useSimulation, SCREENS } from '../context/SimulationContext';
 import {
   Play,
   ArrowRight,
-  TrendingDown,
-  Activity,
+  AlertTriangle,
+  Clock,
   Layers,
   ShieldCheck,
-  AlertTriangle,
+  ChevronDown,
+  ChevronUp,
   HelpCircle,
-  Clock,
-  DollarSign,
-  PackageCheck,
-  CheckCircle2,
-  Sparkles
+  CheckCircle2
 } from 'lucide-react';
 
 export default function LandingOverview() {
   const { startGuidedDemo, setActiveScreen, metrics, customerRisk, activeCompany } = useSimulation();
+  const [showDetails, setShowDetails] = useState(false);
 
   const shockAmount = customerRisk?.outstanding_formatted || '₹24.0L';
   const minCash = metrics?.projected_min_cash_formatted || '₹6.6L';
   const exposure = metrics?.revenue_exposure_formatted || '₹31.0L';
+  const delayDays = customerRisk?.predicted_delay_days || 21;
 
   return (
-    <div className="max-w-[1280px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-16 space-y-16">
+    <div className="max-w-[1160px] mx-auto px-4 sm:px-6 lg:px-8 py-10 sm:py-14 space-y-12 font-sans">
       {/* 1. HERO SECTION */}
       <section className="text-center max-w-4xl mx-auto space-y-6">
-        {/* Scenario & Product Subtitle */}
-        <div className="inline-flex items-center gap-2.5 px-3.5 py-1.5 rounded-full bg-blue-50 border border-blue-200/80 text-blue-700 text-xs font-medium shadow-sm">
-          <span className="w-2 h-2 rounded-full bg-blue-600 animate-pulse" />
-          <span className="font-semibold tracking-wide uppercase">CASHFLOW CHAIN</span>
-          <span className="text-blue-300">•</span>
-          <span className="text-blue-600 font-mono text-[11px]">DEMO SCENARIO • SYNTHETIC SME DATA</span>
+        {/* Live Default Scenario Alert Pill */}
+        <div className="inline-flex flex-wrap items-center justify-center gap-2.5 px-4 py-2 rounded-full bg-rose-50 border border-rose-200 text-rose-800 text-xs sm:text-sm font-semibold shadow-2xs">
+          <span className="w-2.5 h-2.5 rounded-full bg-rose-600 animate-pulse" />
+          <span>DEFAULT DEMO SCENARIO:</span>
+          <strong className="text-slate-900">
+            &ldquo;ABC Industries may receive a ₹24L payment {delayDays} days late.&rdquo;
+          </strong>
         </div>
 
         {/* Primary Headline */}
@@ -41,191 +41,203 @@ export default function LandingOverview() {
         </h1>
 
         {/* Supporting Copy */}
-        <p className="text-lg sm:text-xl text-slate-600 max-w-3xl mx-auto font-normal leading-relaxed">
-          CashFlow Chain predicts payment delays, traces their second-order impact across cash, suppliers, inventory and revenue, and identifies the lowest-cost intervention to stop the cascade.
+        <p className="text-lg sm:text-xl text-slate-600 max-w-2xl mx-auto font-normal leading-relaxed">
+          CashFlow Chain predicts payment delays, shows what they could break next, and recommends what to do.
         </p>
 
-        {/* Core Loop: PREDICT → TRACE → SIMULATE → PREVENT */}
-        <div className="pt-2 pb-4">
-          <div className="inline-flex flex-wrap items-center justify-center gap-2 sm:gap-4 p-2 rounded-2xl bg-white border border-slate-200/80 shadow-sm text-xs font-semibold text-slate-700">
-            <span className="px-3 py-1.5 rounded-xl bg-slate-50 text-slate-900 border border-slate-200">
-              01 PREDICT
-            </span>
-            <span className="text-slate-300">→</span>
-            <span className="px-3 py-1.5 rounded-xl bg-slate-50 text-slate-900 border border-slate-200">
-              02 TRACE
-            </span>
-            <span className="text-slate-300">→</span>
-            <span className="px-3 py-1.5 rounded-xl bg-slate-50 text-slate-900 border border-slate-200">
-              03 SIMULATE
-            </span>
-            <span className="text-slate-300">→</span>
-            <span className="px-3 py-1.5 rounded-xl bg-emerald-50 text-emerald-800 border border-emerald-200">
-              04 PREVENT
-            </span>
-          </div>
-        </div>
-
-        {/* The Core Question Card */}
-        <div className="p-4 sm:p-5 rounded-2xl bg-gradient-to-r from-blue-50/70 via-indigo-50/50 to-blue-50/70 border border-blue-200/60 max-w-2xl mx-auto shadow-sm">
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider block mb-1">
-            The Critical Question for Growing Businesses
-          </span>
-          <p className="text-lg sm:text-xl font-bold text-slate-900 italic">
-            &ldquo;If one important customer pays late, what does that break next?&rdquo;
-          </p>
-        </div>
-
         {/* Primary and Secondary CTAs */}
-        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+        <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
           <button
             onClick={() => startGuidedDemo(1)}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-base font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2.5 px-8 py-4 rounded-xl text-base font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-md shadow-blue-500/20 hover:shadow-lg hover:shadow-blue-500/30 transition-all cursor-pointer"
           >
             <Play className="w-4 h-4 fill-current" />
-            <span>RUN GUIDED DEMO</span>
+            <span>START GUIDED DEMO</span>
           </button>
 
           <button
             onClick={() => setActiveScreen(SCREENS.COMMAND_CENTER)}
-            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-base font-medium bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-sm transition-all cursor-pointer"
+            className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-4 rounded-xl text-base font-semibold bg-white hover:bg-slate-50 text-slate-700 border border-slate-300 shadow-2xs transition-all cursor-pointer"
           >
-            <span>Explore Platform</span>
+            <span>Explore Full Platform</span>
             <ArrowRight className="w-4 h-4" />
           </button>
         </div>
-      </section>
 
-      {/* 2. KEY METRICS AT A GLANCE (CANONICAL BENCHMARK NUMBERS) */}
-      <section className="bg-white rounded-2xl border border-slate-200/80 p-6 sm:p-8 shadow-sm space-y-6">
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-4">
-          <div>
-            <h2 className="text-sm font-semibold uppercase tracking-wider text-slate-500">
-              Benchmark Scenario Profile
-            </h2>
-            <p className="text-base font-bold text-slate-900">
-              {activeCompany || 'Apex Components Ltd.'} • Automotive Precision Manufacturing
-            </p>
-          </div>
-          <span className="text-xs font-mono px-2.5 py-1 rounded bg-slate-100 text-slate-700 self-start sm:self-auto">
-            Opening Cash: ₹42.6L • Safety Floor: ₹15.0L
-          </span>
-        </div>
-
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* Card 1: Shock */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
-            <span className="text-xs font-medium text-slate-500 block uppercase">1. Inflow Shock</span>
-            <div className="mt-1 text-2xl font-bold font-mono text-rose-600">{shockAmount}</div>
-            <p className="text-xs text-slate-600 mt-1">ABC Industries 21-day delay predicted by linear trend model.</p>
-          </div>
-
-          {/* Card 2: Liquidity Breach */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
-            <span className="text-xs font-medium text-slate-500 block uppercase">2. Stress Min Cash</span>
-            <div className="mt-1 text-2xl font-bold font-mono text-amber-600">{minCash}</div>
-            <p className="text-xs text-slate-600 mt-1">Breaches ₹15.0L safety floor on Day 14 (Oct 14, 2026).</p>
-          </div>
-
-          {/* Card 3: Downstream Revenue Exposure */}
-          <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70">
-            <span className="text-xs font-medium text-slate-500 block uppercase">3. Revenue Exposure</span>
-            <div className="mt-1 text-2xl font-bold font-mono text-rose-700">{exposure}</div>
-            <p className="text-xs text-slate-600 mt-1">12-day assembly stockout cancels Orders SO-4021 &amp; SO-4029.</p>
-          </div>
-
-          {/* Card 4: Recommended Intervention */}
-          <div className="p-4 rounded-xl bg-emerald-50/60 border border-emerald-200/80">
-            <span className="text-xs font-medium text-emerald-700 block uppercase">4. Optimal Solution</span>
-            <div className="mt-1 text-2xl font-bold font-mono text-emerald-700">₹48,000</div>
-            <p className="text-xs text-emerald-800 mt-1">Early payment discount saves ₹31.0L (64.6x Net ROI).</p>
-          </div>
-        </div>
-      </section>
-
-      {/* 3. WHY NORMAL ACCOUNTING SOFTWARE IS INSUFFICIENT */}
-      <section className="space-y-6">
-        <div className="text-center max-w-2xl mx-auto space-y-2">
-          <span className="text-xs font-semibold text-blue-600 uppercase tracking-wider">
-            Industry Blindspot
-          </span>
-          <h2 className="text-2xl sm:text-3xl font-bold text-slate-900 tracking-tight">
-            Why Traditional Tools Fail SMEs
-          </h2>
-          <p className="text-sm text-slate-600">
-            82% of small businesses that close are profitable on paper. They fail because financial delays break operations invisibly.
+        {/* Core Question Callout */}
+        <div className="pt-2">
+          <p className="text-sm sm:text-base font-medium text-slate-500">
+            The core question we answer:{' '}
+            <span className="font-bold text-slate-800 italic">
+              &ldquo;If one important customer pays late, what does that break next?&rdquo;
+            </span>
           </p>
+        </div>
+      </section>
+
+      {/* 2. ONLY 3 CONCEPTS: PREDICT → TRACE → PREVENT */}
+      <section className="space-y-4">
+        <div className="flex items-center justify-center gap-3 text-xs font-bold uppercase tracking-widest text-blue-600">
+          <span>HOW IT WORKS IN 60 SECONDS</span>
+          <span>•</span>
+          <span>PREDICT → TRACE → PREVENT</span>
         </div>
 
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-          {/* Pillar 1: Accounting */}
-          <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm">
-              01
+          {/* Concept 1: Predict */}
+          <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="px-2.5 py-1 rounded-lg bg-blue-50 text-blue-700 border border-blue-200 text-xs font-bold">
+                  01 PREDICT
+                </span>
+                <Clock className="w-5 h-5 text-blue-600" />
+              </div>
+              <h2 className="text-xl font-extrabold text-slate-900">
+                Something might go wrong.
+              </h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Spots early warning signs before an invoice is missed. ABC Industries is expected to pay <strong className="text-slate-900">{shockAmount}</strong> about <strong className="text-rose-600">{delayDays} days late</strong>.
+              </p>
             </div>
-            <h3 className="text-lg font-bold text-slate-900">
-              Accounting Software
-            </h3>
-            <p className="text-xs font-mono text-slate-500">Tally • QuickBooks • Zoho Books</p>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              <strong>Rearview mirror bookkeeping.</strong> Records what already happened yesterday. Treats invoices as static isolated rows without predictive delay foresight.
-            </p>
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono text-slate-500">
+              <span>Expected Payment Delay</span>
+              <span className="font-bold text-rose-600">+{delayDays} Days (87% conf.)</span>
+            </div>
           </div>
 
-          {/* Pillar 2: Forecasting */}
-          <div className="p-6 rounded-2xl bg-white border border-slate-200/80 shadow-sm space-y-3">
-            <div className="w-10 h-10 rounded-xl bg-slate-100 flex items-center justify-center text-slate-600 font-bold text-sm">
-              02
+          {/* Concept 2: Trace */}
+          <div className="p-6 rounded-2xl bg-white border border-slate-200/90 shadow-xs flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200 text-xs font-bold">
+                  02 TRACE
+                </span>
+                <Layers className="w-5 h-5 text-amber-600" />
+              </div>
+              <h2 className="text-xl font-extrabold text-slate-900">
+                Here&apos;s what it could break.
+              </h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Maps how the problem spreads: Cash drops to <strong className="text-slate-900">{minCash}</strong> → Supplier X holds raw materials → 12-day inventory outage → <strong className="text-rose-600">{exposure}</strong> in customer orders at risk.
+              </p>
             </div>
-            <h3 className="text-lg font-bold text-slate-900">
-              Cash Forecasting Tools
-            </h3>
-            <p className="text-xs font-mono text-slate-500">Float • Pulse • PlanGuru</p>
-            <p className="text-sm text-slate-600 leading-relaxed">
-              <strong>Stops at the bank account.</strong> Pure financial spreadsheet. Completely blind to raw material procurement lead times, factory buffers, and customer contract SLAs.
-            </p>
+            <div className="pt-3 border-t border-slate-100 flex items-center justify-between text-xs font-mono text-slate-500">
+              <span>What Happens Next</span>
+              <span className="font-bold text-rose-600">{exposure} Revenue Exposed</span>
+            </div>
           </div>
 
-          {/* Pillar 3: CashFlow Chain */}
-          <div className="p-6 rounded-2xl bg-gradient-to-b from-blue-50/50 to-white border-2 border-blue-500/60 shadow-sm space-y-3 relative">
-            <span className="absolute top-4 right-4 text-[10px] uppercase font-bold tracking-wider px-2 py-0.5 rounded bg-blue-600 text-white">
-              CASHFLOW CHAIN
-            </span>
-            <div className="w-10 h-10 rounded-xl bg-blue-600 flex items-center justify-center text-white font-bold text-sm">
-              03
+          {/* Concept 3: Prevent */}
+          <div className="p-6 rounded-2xl bg-emerald-50/40 border-2 border-emerald-500/70 shadow-xs flex flex-col justify-between space-y-4">
+            <div className="space-y-3">
+              <div className="flex items-center justify-between">
+                <span className="px-2.5 py-1 rounded-lg bg-emerald-600 text-white text-xs font-bold">
+                  03 PREVENT
+                </span>
+                <ShieldCheck className="w-5 h-5 text-emerald-600" />
+              </div>
+              <h2 className="text-xl font-extrabold text-slate-900">
+                Here&apos;s the best response.
+              </h2>
+              <p className="text-sm text-slate-600 leading-relaxed">
+                Compares available options and recommends the lowest-cost fix: a <strong className="text-emerald-700">₹48,000</strong> early-payment discount that protects <strong className="text-emerald-700">100% ({exposure})</strong> of revenue.
+              </p>
             </div>
-            <h3 className="text-lg font-bold text-blue-950">
-              Second-Order Decision Engine
-            </h3>
-            <p className="text-xs font-mono text-blue-600">Predict → Trace → Simulate → Prevent</p>
-            <p className="text-sm text-slate-700 leading-relaxed">
-              <strong>Connects finance to the factory floor.</strong> Uses machine learning to forecast delays, traces the 6-node downstream operational domino, and solves for the lowest-cost intervention.
-            </p>
+            <div className="pt-3 border-t border-emerald-200/70 flex items-center justify-between text-xs font-mono text-emerald-800">
+              <span>Best Action</span>
+              <span className="font-bold text-emerald-700">₹48K saves {exposure} (64.6x ROI)</span>
+            </div>
           </div>
         </div>
       </section>
 
-      {/* 4. FAST JUMP BANNER */}
-      <section className="p-8 rounded-2xl bg-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
+      {/* 3. ABC SCENARIO QUICK-START CARD */}
+      <section className="p-6 sm:p-8 rounded-2xl bg-slate-900 text-white flex flex-col md:flex-row items-center justify-between gap-6 shadow-md">
         <div className="space-y-1.5 text-center md:text-left">
-          <span className="text-xs font-mono text-blue-400 uppercase tracking-wider font-semibold">
-            Interactive Product Walkthrough
-          </span>
+          <div className="inline-flex items-center gap-2 text-xs font-mono text-blue-400 uppercase tracking-wider font-semibold">
+            <span>Interactive 5-Step Story Walkthrough</span>
+            <span>•</span>
+            <span>60–90 Seconds</span>
+          </div>
           <h3 className="text-xl sm:text-2xl font-bold tracking-tight">
-            Ready to experience the 5-step decision flow?
+            ABC Industries may receive a ₹24L payment 21 days late.
           </h3>
-          <p className="text-sm text-slate-400 max-w-xl">
-            See how a single payment delay escalates into a ₹31L factory crisis, and how Option A stops it for ₹48K.
+          <p className="text-sm text-slate-300 max-w-xl">
+            Walk through the live scenario step-by-step: see why it happens, what it breaks next, and how the best response prevents ₹31L in lost orders.
           </p>
         </div>
 
         <button
           onClick={() => startGuidedDemo(1)}
-          className="px-6 py-3 rounded-xl bg-blue-500 hover:bg-blue-400 text-slate-950 font-bold text-sm shadow-md transition-all shrink-0 cursor-pointer flex items-center gap-2"
+          className="px-7 py-4 rounded-xl bg-blue-500 hover:bg-blue-400 text-slate-950 font-extrabold text-sm shadow-md transition-all shrink-0 cursor-pointer flex items-center gap-2"
         >
           <Play className="w-4 h-4 fill-current" />
-          <span>START GUIDED DEMO</span>
+          <span>START ABC DEMO</span>
         </button>
+      </section>
+
+      {/* 4. EXPANDABLE "WHY? / DETAILS" SECTION (KEEPS MAIN PAGE UNCLUTTERED) */}
+      <section className="bg-white rounded-2xl border border-slate-200/80 overflow-hidden shadow-2xs">
+        <button
+          onClick={() => setShowDetails(!showDetails)}
+          className="w-full px-6 py-4 flex items-center justify-between text-left hover:bg-slate-50 transition-colors cursor-pointer"
+        >
+          <div className="flex items-center gap-2.5">
+            <HelpCircle className="w-4 h-4 text-blue-600" />
+            <span className="text-sm font-bold text-slate-800">
+              Why normal accounting software isn&apos;t enough &amp; full scenario numbers
+            </span>
+          </div>
+          <div className="flex items-center gap-1.5 text-xs font-semibold text-blue-600">
+            <span>{showDetails ? 'Hide Details' : 'Why? / View Details'}</span>
+            {showDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+          </div>
+        </button>
+
+        {showDetails && (
+          <div className="px-6 pb-6 pt-2 border-t border-slate-100 space-y-6 text-sm text-slate-600">
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5">
+                <h4 className="font-bold text-slate-900">1. Accounting Software (Tally / QuickBooks)</h4>
+                <p className="text-xs leading-relaxed">
+                  <strong>Looks backward.</strong> Records invoices after they are overdue, with no warning of upcoming delays or factory impact.
+                </p>
+              </div>
+              <div className="p-4 rounded-xl bg-slate-50 border border-slate-200/70 space-y-1.5">
+                <h4 className="font-bold text-slate-900">2. Basic Cash Tools (Float / Spreadsheets)</h4>
+                <p className="text-xs leading-relaxed">
+                  <strong>Stops at the bank balance.</strong> Doesn&apos;t connect cash gaps to supplier holds, raw material stockouts, or customer orders at risk.
+                </p>
+              </div>
+              <div className="p-4 rounded-xl bg-blue-50/50 border border-blue-200 space-y-1.5">
+                <h4 className="font-bold text-blue-950">3. CashFlow Chain (Our Approach)</h4>
+                <p className="text-xs text-slate-700 leading-relaxed">
+                  <strong>Connects finance to operations.</strong> Predicts the delay, traces the 6-step domino effect, and calculates the lowest-cost fix.
+                </p>
+              </div>
+            </div>
+
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-3 pt-2 font-mono text-xs">
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span className="text-slate-500 block">Company</span>
+                <span className="font-bold text-slate-900">{activeCompany || 'Apex Components Ltd.'}</span>
+              </div>
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span className="text-slate-500 block">Starting Cash / Safety Floor</span>
+                <span className="font-bold text-slate-900">₹42.6L / ₹15.0L</span>
+              </div>
+              <div className="p-3 rounded-lg bg-slate-50 border border-slate-200">
+                <span className="text-slate-500 block">Lowest Projected Cash</span>
+                <span className="font-bold text-rose-600">{minCash} (Oct 14)</span>
+              </div>
+              <div className="p-3 rounded-lg bg-emerald-50 border border-emerald-200">
+                <span className="text-emerald-700 block">Best Action Net Savings</span>
+                <span className="font-bold text-emerald-800">+₹30.52L (64.6x ROI)</span>
+              </div>
+            </div>
+          </div>
+        )}
       </section>
     </div>
   );

@@ -83,9 +83,9 @@ function CustomFinancialNode({ data, id }) {
 
       {/* Footer Cue */}
       <div className="mt-3 pt-2.5 border-t border-slate-100 flex items-center justify-between text-xs font-mono text-slate-500">
-        <span className="flex items-center gap-1.5 text-blue-600 font-semibold group-hover:text-blue-700">
+        <span className="flex items-center gap-1.5 text-blue-600 font-semibold group-hover:text-blue-700 font-sans">
           <Calculator className="w-3.5 h-3.5" />
-          <span>Inspect Formula</span>
+          <span>Why? / View Details</span>
         </span>
         <ExternalLink className="w-3.5 h-3.5 opacity-60 group-hover:opacity-100" />
       </div>

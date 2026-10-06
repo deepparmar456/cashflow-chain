@@ -15,24 +15,15 @@ import {
   ArrowLeft,
   RotateCcw,
   X,
-  Play,
   CheckCircle2,
   AlertTriangle,
-  TrendingDown,
-  TrendingUp,
-  Layers,
   Calculator,
-  ShieldCheck,
-  ShieldAlert,
   Award,
-  Zap,
-  DollarSign,
-  Clock,
-  Sparkles
+  HelpCircle,
+  ChevronDown,
+  ChevronUp,
+  ShieldCheck
 } from 'lucide-react';
-import {
-  AreaChart, Area, XAxis, YAxis, Tooltip, ResponsiveContainer, ReferenceLine, CartesianGrid
-} from 'recharts';
 
 export default function GuidedDemo() {
   const {
@@ -47,9 +38,13 @@ export default function GuidedDemo() {
     customerRisk,
     impactChain,
     interventionsData,
-    metrics,
-    timeline
+    metrics
   } = useSimulation();
+
+  const [showPredictDetails, setShowPredictDetails] = useState(false);
+  const [showTraceDetails, setShowTraceDetails] = useState(false);
+  const [showCompareDetails, setShowCompareDetails] = useState(false);
+  const [showPreventDetails, setShowPreventDetails] = useState(false);
 
   const nodeTypes = useMemo(() => ({
     customFinancialNode: CustomFinancialNode
@@ -67,189 +62,222 @@ export default function GuidedDemo() {
   const focalOutstanding = customerRisk?.outstanding_formatted || '₹24.0L';
   const predictedDelay = customerRisk?.predicted_delay_days || 21;
   const confidence = customerRisk?.confidence_formatted || '87%';
-  const invoices = customerRisk?.historical_invoices || customerRisk?.invoices || [];
+
+  const currentStageObj = GUIDED_STAGES.find(s => s.id === guidedStep) || GUIDED_STAGES[0];
 
   return (
-    <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 flex flex-col">
+    <div className="min-h-[calc(100vh-65px)] bg-slate-50 text-slate-900 flex flex-col font-sans">
       {/* 1. TOP PROGRESS NAVIGATION BAR */}
       <header className="sticky top-0 z-30 bg-white/95 backdrop-blur border-b border-slate-200 shadow-xs">
-        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex flex-col sm:flex-row items-center justify-between gap-3">
-          {/* Progress Steps */}
-          <div className="flex items-center gap-1 sm:gap-2 overflow-x-auto w-full sm:w-auto">
-            {GUIDED_STAGES.map((stg) => {
+        <div className="max-w-[1400px] mx-auto px-4 sm:px-6 py-3 flex flex-col lg:flex-row items-center justify-between gap-3">
+          {/* Progress Steps: 01 Predict -> 02 Trace -> 03 Compare -> 04 Prevent -> 05 Verdict */}
+          <div className="flex items-center gap-1 sm:gap-1.5 overflow-x-auto w-full lg:w-auto pb-1 lg:pb-0">
+            {GUIDED_STAGES.map((stg, idx) => {
               const isActive = guidedStep === stg.id;
               const isPast = guidedStep > stg.id;
               return (
-                <button
-                  key={stg.id}
-                  onClick={() => setGuidedStep(stg.id)}
-                  className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-semibold transition-all cursor-pointer ${
-                    isActive
-                      ? 'bg-blue-600 text-white shadow-xs'
-                      : isPast
-                      ? 'bg-blue-50 text-blue-700 hover:bg-blue-100'
-                      : 'text-slate-500 hover:text-slate-800 hover:bg-slate-100'
-                  }`}
-                >
-                  <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold ${
-                    isActive
-                      ? 'bg-white text-blue-600'
-                      : isPast
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-slate-200 text-slate-600'
-                  }`}>
-                    {isPast ? '✓' : stg.id}
-                  </span>
-                  <span>{stg.title}</span>
-                </button>
+                <React.Fragment key={stg.id}>
+                  <button
+                    onClick={() => setGuidedStep(stg.id)}
+                    className={`flex items-center gap-2 px-3 py-1.5 rounded-lg text-xs font-bold transition-all cursor-pointer shrink-0 ${
+                      isActive
+                        ? 'bg-blue-600 text-white shadow-xs ring-2 ring-blue-500/20'
+                        : isPast
+                        ? 'bg-emerald-50 text-emerald-800 border border-emerald-200 hover:bg-emerald-100'
+                        : 'text-slate-600 hover:text-slate-900 hover:bg-slate-100'
+                    }`}
+                  >
+                    <span className={`w-5 h-5 rounded-full flex items-center justify-center text-[11px] font-bold ${
+                      isActive
+                        ? 'bg-white text-blue-600'
+                        : isPast
+                        ? 'bg-emerald-600 text-white'
+                        : 'bg-slate-200 text-slate-600'
+                    }`}>
+                      {isPast ? '✓' : stg.id}
+                    </span>
+                    <span>{stg.title}</span>
+                  </button>
+                  {idx < GUIDED_STAGES.length - 1 && (
+                    <span className="text-slate-300 font-bold text-xs px-0.5">→</span>
+                  )}
+                </React.Fragment>
               );
             })}
           </div>
 
-          {/* Stepper Controls */}
-          <div className="flex items-center gap-2 self-end sm:self-auto shrink-0">
-            <button
-              onClick={resetGuidedDemo}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
-              title="Restart Demo from Step 1"
-            >
-              <RotateCcw className="w-3.5 h-3.5" />
-              <span className="hidden sm:inline">Restart</span>
-            </button>
+          {/* Current Step Indicator + Obvious Back / Next Controls */}
+          <div className="flex items-center justify-between lg:justify-end gap-2 w-full lg:w-auto shrink-0">
+            <span className="text-xs font-mono font-semibold text-slate-500 hidden sm:inline px-2 py-1 rounded bg-slate-100 border border-slate-200">
+              Step {guidedStep} of 5: {currentStageObj.story}
+            </span>
 
-            <button
-              onClick={prevGuidedStep}
-              disabled={guidedStep === 1}
-              className="inline-flex items-center gap-1 px-3 py-1.5 rounded-lg text-xs font-medium text-slate-700 hover:bg-slate-100 border border-slate-200 disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
-            >
-              <ArrowLeft className="w-3.5 h-3.5" />
-              <span>Back</span>
-            </button>
+            <div className="flex items-center gap-2 ml-auto lg:ml-0">
+              <button
+                onClick={prevGuidedStep}
+                disabled={guidedStep === 1}
+                className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer shadow-2xs"
+              >
+                <ArrowLeft className="w-3.5 h-3.5" />
+                <span>Back</span>
+              </button>
 
-            <button
-              onClick={nextGuidedStep}
-              disabled={guidedStep === 5}
-              className="inline-flex items-center gap-1 px-3.5 py-1.5 rounded-lg text-xs font-semibold bg-blue-600 hover:bg-blue-700 text-white shadow-xs disabled:opacity-30 disabled:pointer-events-none transition-colors cursor-pointer"
-            >
-              <span>Next</span>
-              <ArrowRight className="w-3.5 h-3.5" />
-            </button>
+              <button
+                onClick={nextGuidedStep}
+                disabled={guidedStep === 5}
+                className="inline-flex items-center gap-1.5 px-4 py-1.5 rounded-lg text-xs font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-xs disabled:opacity-35 disabled:pointer-events-none transition-colors cursor-pointer"
+              >
+                <span>Next</span>
+                <ArrowRight className="w-3.5 h-3.5" />
+              </button>
 
-            <button
-              onClick={() => exitGuidedDemo(SCREENS.COMMAND_CENTER)}
-              className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-500 hover:text-slate-800 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
-              title="Exit to Platform"
-            >
-              <X className="w-3.5 h-3.5" />
-              <span className="hidden md:inline">Explore Platform</span>
-            </button>
+              <button
+                onClick={resetGuidedDemo}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+                title="Restart Demo from Step 1"
+              >
+                <RotateCcw className="w-3.5 h-3.5" />
+                <span className="hidden md:inline">Restart</span>
+              </button>
+
+              <button
+                onClick={() => exitGuidedDemo(SCREENS.COMMAND_CENTER)}
+                className="inline-flex items-center gap-1 px-2.5 py-1.5 rounded-lg text-xs font-medium text-slate-600 hover:text-slate-900 hover:bg-slate-100 border border-slate-200 transition-colors cursor-pointer"
+                title="Explore Full Platform"
+              >
+                <X className="w-3.5 h-3.5" />
+                <span className="hidden xl:inline">Explore Full Platform</span>
+              </button>
+            </div>
           </div>
         </div>
       </header>
 
-      {/* 2. DYNAMIC CHAPTER CONTENT */}
-      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col">
+      {/* 2. DYNAMIC STORY CONTENT */}
+      <main className="flex-1 max-w-[1400px] w-full mx-auto px-4 sm:px-6 py-6 sm:py-8 flex flex-col justify-between">
         {/* ============================================================ */}
-        {/* CHAPTER 1: PREDICT                                           */}
+        {/* STEP 1: 01 PREDICT — "Something might go wrong."             */}
         {/* ============================================================ */}
         {guidedStep === 1 && (
-          <div className="space-y-8 animate-in fade-in duration-200 max-w-5xl mx-auto w-full">
-            {/* Header */}
+          <div className="space-y-6 animate-in fade-in duration-200 max-w-5xl mx-auto w-full">
+            {/* Story Header */}
             <div className="space-y-2 text-center sm:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
-                <span>STAGE 01</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
+                <span>STEP 01 OF 05 • PREDICT</span>
                 <span>•</span>
-                <span>EARLY PREDICTION</span>
+                <span>&ldquo;Something might go wrong.&rdquo;</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                One customer starts paying later.
+                {focalCustomer} may receive {focalOutstanding} late.
               </h2>
-              <p className="text-base text-slate-600 max-w-2xl">
-                {focalCustomer}&apos;s recent settlement behaviour reveals an escalating payment delay trend.
+              <p className="text-lg sm:text-xl font-bold text-rose-600">
+                → Expected payment delay: {predictedDelay} days
+              </p>
+              <p className="text-sm text-slate-600 max-w-2xl">
+                Before the invoice even becomes overdue, CashFlow Chain spots a consistent pattern of slower payments from {focalCustomer}.
               </p>
             </div>
 
-            {/* Account Card & Metrics */}
-            <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+            {/* 4 Key Cards in Plain Business Language */}
+            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4">
               <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Customer</span>
                 <div className="mt-1 text-xl font-bold text-slate-900 truncate">{focalCustomer}</div>
-                <span className="text-xs text-blue-600 font-mono mt-0.5 block">Tier-1 Strategic Buyer</span>
+                <span className="text-xs text-blue-600 font-medium mt-0.5 block">Key Account (48% of month&apos;s cash)</span>
               </div>
 
               <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Receivable Balance</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Payment Amount</span>
                 <div className="mt-1 text-2xl font-bold font-mono text-slate-900">{focalOutstanding}</div>
-                <span className="text-xs text-slate-500 font-mono mt-0.5 block">Due: 08 Oct 2026</span>
+                <span className="text-xs text-slate-500 font-mono mt-0.5 block">Due Date: 08 Oct 2026</span>
               </div>
 
-              <div className="p-5 rounded-2xl bg-rose-50 border border-rose-200 shadow-xs">
-                <span className="text-xs font-semibold text-rose-700 uppercase tracking-wider block">Predicted Delay</span>
+              <div className="p-5 rounded-2xl bg-rose-50 border-2 border-rose-300 shadow-xs">
+                <span className="text-xs font-bold text-rose-800 uppercase tracking-wider block">Expected Payment Delay</span>
                 <div className="mt-1 text-3xl font-extrabold font-mono text-rose-600">+{predictedDelay} Days</div>
-                <span className="text-xs text-rose-700 font-mono mt-0.5 block">Est. Pay: 29 Oct 2026</span>
+                <span className="text-xs text-rose-700 font-mono mt-0.5 block">Expected Arrival: 29 Oct 2026</span>
               </div>
 
               <div className="p-5 rounded-2xl bg-white border border-slate-200 shadow-xs">
-                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Model Confidence</span>
+                <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">Prediction Confidence</span>
                 <div className="mt-1 text-2xl font-bold font-mono text-blue-600">{confidence}</div>
-                <span className="text-xs text-slate-500 font-mono mt-0.5 block">Linear Delay Trend Model</span>
+                <span className="text-xs text-slate-500 mt-0.5 block">Based on recent payment trend</span>
               </div>
             </div>
 
-            {/* Historical Payment Escalation Visual */}
+            {/* Historical Payment Pattern */}
             <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-xs space-y-4">
               <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 border-b border-slate-100 pb-3">
                 <div>
                   <h3 className="text-sm font-bold uppercase tracking-wider text-slate-900">
-                    Payment Escalation Pattern (Last 4 Cycles)
+                    Why We Expect This Delay (Recent Payment History)
                   </h3>
                   <p className="text-xs text-slate-500">
-                    Delay regression: <code className="text-blue-600 bg-slate-100 px-1.5 py-0.5 rounded font-mono">Delay(t) = 5.0·t + 1.0</code> (+5 days per period)
+                    Each month, {focalCustomer} has paid 5 days later than the month before.
                   </p>
                 </div>
                 <span className="text-xs font-mono font-semibold text-rose-700 bg-rose-50 px-2.5 py-1 rounded border border-rose-200 self-start sm:self-auto">
-                  Deteriorating Trend: 6d → 11d → 16d → 21d
+                  Growing Delay Pattern: 6d → 11d → 16d → 21d
                 </span>
               </div>
 
               <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-xs text-slate-500 font-medium block">Period 1 (July)</span>
-                  <div className="text-lg font-bold font-mono text-slate-800 mt-1">+6 Days</div>
-                  <span className="text-[11px] text-emerald-700 font-medium">Settled</span>
+                  <span className="text-xs text-slate-500 font-medium block">July Invoice (₹18.0L)</span>
+                  <div className="text-lg font-bold font-mono text-slate-800 mt-1">6 days late</div>
+                  <span className="text-[11px] text-emerald-700 font-medium">Paid</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-xs text-slate-500 font-medium block">Period 2 (August)</span>
-                  <div className="text-lg font-bold font-mono text-slate-800 mt-1">+11 Days</div>
-                  <span className="text-[11px] text-emerald-700 font-medium">Settled</span>
+                  <span className="text-xs text-slate-500 font-medium block">August Invoice (₹21.0L)</span>
+                  <div className="text-lg font-bold font-mono text-slate-800 mt-1">11 days late</div>
+                  <span className="text-[11px] text-emerald-700 font-medium">Paid</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-center">
-                  <span className="text-xs text-slate-500 font-medium block">Period 3 (September)</span>
-                  <div className="text-lg font-bold font-mono text-slate-800 mt-1">+16 Days</div>
-                  <span className="text-[11px] text-emerald-700 font-medium">Settled</span>
+                  <span className="text-xs text-slate-500 font-medium block">September Invoice (₹22.5L)</span>
+                  <div className="text-lg font-bold font-mono text-slate-800 mt-1">16 days late</div>
+                  <span className="text-[11px] text-emerald-700 font-medium">Paid</span>
                 </div>
 
                 <div className="p-3.5 rounded-xl bg-rose-50 border-2 border-rose-300 text-center">
-                  <span className="text-xs text-rose-800 font-semibold block">Period 4 (October)</span>
-                  <div className="text-xl font-extrabold font-mono text-rose-600 mt-1">+{predictedDelay} Days</div>
-                  <span className="text-[11px] text-rose-700 font-bold uppercase tracking-wider">Projected Shock</span>
+                  <span className="text-xs text-rose-800 font-semibold block">October Invoice (₹24.0L)</span>
+                  <div className="text-xl font-extrabold font-mono text-rose-600 mt-1">{predictedDelay} days late</div>
+                  <span className="text-[11px] text-rose-700 font-bold uppercase tracking-wider">Expected Delay</span>
                 </div>
+              </div>
+
+              {/* Expandable "Why? / Technical Details" */}
+              <div className="pt-2 border-t border-slate-100">
+                <button
+                  onClick={() => setShowPredictDetails(!showPredictDetails)}
+                  className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                  <span>{showPredictDetails ? 'Hide Technical Formula' : 'Why? / View Prediction Model Details'}</span>
+                  {showPredictDetails ? <ChevronUp className="w-3.5 h-3.5" /> : <ChevronDown className="w-3.5 h-3.5" />}
+                </button>
+                {showPredictDetails && (
+                  <div className="mt-2 p-3.5 rounded-xl bg-slate-50 border border-slate-200 text-xs font-mono text-slate-700 space-y-1">
+                    <div><strong>Model:</strong> Ordinary Least Squares Linear Regression (Scikit-Learn)</div>
+                    <div><strong>Equation:</strong> <code>Delay(t) = 5.0 * t + 1.0</code> (where t = billing period 1, 2, 3, 4)</div>
+                    <div><strong>Goodness of Fit:</strong> R² = 1.00 | Slope = +5.0 days/cycle | Confidence = 87%</div>
+                  </div>
+                )}
               </div>
             </div>
 
-            {/* The Climax Thought & Stage CTA */}
-            <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-50 via-slate-50 to-amber-50 border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4">
+            {/* Story Transition Banner */}
+            <div className="p-6 rounded-2xl bg-gradient-to-r from-amber-50 via-white to-amber-50 border border-amber-200 flex flex-col sm:flex-row items-center justify-between gap-4 shadow-2xs">
               <div className="space-y-1 text-center sm:text-left">
-                <span className="text-xs font-bold text-amber-700 uppercase tracking-wider">
-                  The Critical Insight
+                <span className="text-xs font-bold text-amber-800 uppercase tracking-wider">
+                  Why This Matters
                 </span>
                 <p className="text-base font-bold text-slate-900">
-                  &ldquo;The late payment itself isn&apos;t the biggest problem. What breaks next is.&rdquo;
+                  &ldquo;The late payment itself isn&apos;t the biggest problem. What it breaks next is.&rdquo;
                 </p>
                 <p className="text-xs text-slate-600">
-                  Now trace how this 21-day delay cascades through the cash buffer, supplier payables, and production floor.
+                  Next, see how this 21-day delay spreads across cash, suppliers, inventory, and customer orders.
                 </p>
               </div>
 
@@ -257,7 +285,7 @@ export default function GuidedDemo() {
                 onClick={() => setGuidedStep(2)}
                 className="inline-flex items-center gap-2 px-6 py-3.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all shrink-0 cursor-pointer"
               >
-                <span>TRACE THE IMPACT</span>
+                <span>02 TRACE: WHAT HAPPENS NEXT</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
@@ -265,23 +293,23 @@ export default function GuidedDemo() {
         )}
 
         {/* ============================================================ */}
-        {/* CHAPTER 2: TRACE (THE 6-NODE HERO GRAPH)                     */}
+        {/* STEP 2: 02 TRACE — "Here's what it could break."             */}
         {/* ============================================================ */}
         {guidedStep === 2 && (
           <div className="space-y-4 animate-in fade-in duration-200 flex-1 flex flex-col">
             {/* Header Row */}
             <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
               <div>
-                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
-                  <span>STAGE 02</span>
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-amber-50 text-amber-800 text-xs font-bold border border-amber-200">
+                  <span>STEP 02 OF 05 • TRACE</span>
                   <span>•</span>
-                  <span>DEPENDENCY CASCADE</span>
+                  <span>&ldquo;Here&apos;s what it could break.&rdquo;</span>
                 </div>
                 <h2 className="text-2xl sm:text-3xl font-extrabold text-slate-900 tracking-tight mt-1">
-                  One delayed payment. Six downstream consequences.
+                  What happens next?
                 </h2>
                 <p className="text-sm text-slate-600">
-                  CashFlow Chain doesn&apos;t stop at identifying the late payment. It follows the dependency chain to determine what that delay breaks next.
+                  One ₹24.0L delayed payment triggers a 6-step chain reaction that puts <strong>₹31.0L of customer orders at risk</strong>.
                 </p>
               </div>
 
@@ -289,32 +317,63 @@ export default function GuidedDemo() {
                 onClick={() => setGuidedStep(3)}
                 className="inline-flex items-center gap-2 px-6 py-3 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all self-start md:self-auto cursor-pointer shrink-0"
               >
-                <span>SIMULATE A RESPONSE</span>
+                <span>03 COMPARE: HOW TO RESPOND</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
 
-            {/* Quick 6-Node Flow Legend */}
-            <div className="p-3 rounded-xl bg-white border border-slate-200 text-xs text-slate-700 flex flex-wrap items-center justify-between gap-2">
-              <div className="flex items-center gap-2 font-mono">
-                <span className="font-bold text-slate-900">THE 6 HOPS:</span>
-                <span className="text-rose-600 font-semibold">1. ABC Industries (₹24L delay)</span>
-                <span>→</span>
-                <span className="text-amber-600 font-semibold">2. Cash Buffer (&lt; ₹15L floor)</span>
-                <span>→</span>
-                <span className="text-rose-600 font-semibold">3. Supplier X (₹12L hold)</span>
-                <span>→</span>
-                <span className="text-amber-600 font-semibold">4. Raw Material (frozen)</span>
-                <span>→</span>
-                <span className="text-rose-600 font-semibold">5. Inventory (12d stockout)</span>
-                <span>→</span>
-                <span className="text-rose-700 font-bold">6. Revenue (₹31L canceled)</span>
+            {/* Plain-Language Chain Strip requested by prompt */}
+            <div className="p-3.5 rounded-xl bg-white border border-slate-200 shadow-2xs space-y-2">
+              <div className="flex flex-wrap items-center justify-between gap-2 text-xs">
+                <div className="flex flex-wrap items-center gap-1.5 sm:gap-2 font-semibold">
+                  <span className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
+                    1. Late payment (₹24L)
+                  </span>
+                  <span className="text-slate-400">→</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200">
+                    2. Cash gap (₹6.6L min)
+                  </span>
+                  <span className="text-slate-400">→</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
+                    3. Supplier pressure (₹12L hold)
+                  </span>
+                  <span className="text-slate-400">→</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-amber-50 text-amber-800 border border-amber-200">
+                    4. Inventory impact (12d stockout)
+                  </span>
+                  <span className="text-slate-400">→</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-rose-50 text-rose-700 border border-rose-200">
+                    5. Orders at risk (2 orders)
+                  </span>
+                  <span className="text-slate-400">→</span>
+                  <span className="px-2.5 py-1 rounded-lg bg-rose-600 text-white font-bold">
+                    6. Revenue exposed (₹31.0L)
+                  </span>
+                </div>
+
+                <button
+                  onClick={() => setShowTraceDetails(!showTraceDetails)}
+                  className="inline-flex items-center gap-1 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer shrink-0"
+                >
+                  <HelpCircle className="w-3.5 h-3.5" />
+                  <span>{showTraceDetails ? 'Hide Math' : 'Why? / Details'}</span>
+                </button>
               </div>
-              <span className="text-slate-400 font-mono text-[11px]">Click any node card for ledger proof</span>
+
+              {showTraceDetails && (
+                <div className="pt-2 border-t border-slate-100 text-xs font-mono text-slate-600 grid grid-cols-1 sm:grid-cols-3 gap-2">
+                  <div>• <strong>Cash Gap:</strong> Cash drops to ₹6.6L on Oct 14 (₹8.4L below the ₹15.0L safety floor).</div>
+                  <div>• <strong>Inventory Math:</strong> 14d lead time + 16d supplier hold − 18d stock buffer = 12 days stockout.</div>
+                  <div>• <strong>Orders Exposed:</strong> 120 unbuilt units breach Orders SO-4021 &amp; SO-4029 = ₹31.0L revenue.</div>
+                </div>
+              )}
             </div>
 
             {/* Embedded Live React Flow Canvas */}
-            <div className="relative w-full h-[520px] min-h-[520px] rounded-2xl border-2 border-slate-200 bg-white overflow-hidden shadow-sm">
+            <div className="relative w-full h-[500px] min-h-[500px] rounded-2xl border-2 border-slate-200 bg-white overflow-hidden shadow-sm">
+              <div className="absolute top-3 left-4 z-10 px-3 py-1 rounded-full bg-white/90 backdrop-blur border border-slate-200 text-[11px] font-medium text-slate-600 shadow-2xs">
+                💡 Click any card in the chain to inspect its exact numbers and formula
+              </div>
               <ReactFlow
                 nodes={nodes}
                 edges={edges}
@@ -340,36 +399,23 @@ export default function GuidedDemo() {
         )}
 
         {/* ============================================================ */}
-        {/* CHAPTER 3: SIMULATE (TEST THE AVAILABLE RESPONSES)           */}
+        {/* STEP 3: 03 COMPARE — "Here are the options."                 */}
         {/* ============================================================ */}
         {guidedStep === 3 && (
           <div className="space-y-6 animate-in fade-in duration-200 max-w-5xl mx-auto w-full">
             {/* Header */}
             <div className="space-y-2 text-center sm:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-semibold border border-blue-200">
-                <span>STAGE 03</span>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-blue-50 text-blue-700 text-xs font-bold border border-blue-200">
+                <span>STEP 03 OF 05 • COMPARE</span>
                 <span>•</span>
-                <span>PRESCRIBED INTERVENTIONS</span>
+                <span>&ldquo;Here are the options.&rdquo;</span>
               </div>
               <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Now test the available responses.
+                How should ABC respond?
               </h2>
               <p className="text-base text-slate-600 max-w-2xl">
-                CashFlow Chain evaluates the mathematical cost-benefit of every operational countermeasure and recommends the lowest-cost intervention that protects 100% of revenue.
+                We compare the 3 available actions side-by-side to find the lowest-cost way to protect all <strong>₹31.0L</strong> of customer orders.
               </p>
-            </div>
-
-            {/* Objective Function Formulation Callout */}
-            <div className="p-4 rounded-xl bg-white border border-slate-200 flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3 text-xs font-mono">
-              <div className="flex items-center gap-2 text-blue-800">
-                <span className="font-bold text-slate-900">Optimization Goal:</span>
-                <code className="bg-slate-100 text-blue-700 px-2.5 py-1 rounded border border-slate-200">
-                  min Cost(a) subject to RevenueProtected(a) == ₹31.0L
-                </code>
-              </div>
-              <span className="text-slate-500">
-                Option A strictly dominates Options B &amp; C on cost and speed.
-              </span>
             </div>
 
             {/* The 3 Intervention Cards */}
@@ -378,7 +424,7 @@ export default function GuidedDemo() {
               <div className="rounded-2xl border-2 border-emerald-500 bg-white p-6 shadow-md flex flex-col justify-between relative">
                 <span className="absolute -top-3 left-6 inline-flex items-center gap-1 px-3 py-0.5 rounded-full text-xs font-bold bg-emerald-600 text-white shadow-xs">
                   <Award className="w-3.5 h-3.5" />
-                  <span>RECOMMENDED ACTION</span>
+                  <span>BEST ACTION • RECOMMENDED</span>
                 </span>
 
                 <div className="space-y-4 pt-1">
@@ -386,26 +432,26 @@ export default function GuidedDemo() {
                     <span className="text-xs font-mono font-bold text-emerald-700 uppercase">OPTION A</span>
                     <h3 className="text-lg font-bold text-slate-900 mt-0.5">Early Payment Incentive</h3>
                     <p className="text-xs text-slate-600 mt-1">
-                      Offer ABC Industries a 2% settlement discount to pay on Day 10 (Oct 10).
+                      Offer {focalCustomer} a small 2% discount to pay early on Oct 10 instead of Oct 29.
                     </p>
                   </div>
 
-                  <div className="space-y-2 py-3 border-y border-slate-100 font-mono text-xs">
+                  <div className="space-y-2.5 py-3 border-y border-slate-100 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Intervention Cost:</span>
-                      <span className="font-bold text-emerald-700 text-sm">₹48,000 (2%)</span>
+                      <span className="text-slate-500">Action Cost:</span>
+                      <span className="font-bold font-mono text-emerald-700 text-sm">₹48,000 (2%)</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">Revenue Protected:</span>
-                      <span className="font-bold text-emerald-700 text-sm">₹31.0L (100%)</span>
+                      <span className="font-bold font-mono text-emerald-700 text-sm">₹31.0L (100%)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Factory Outage:</span>
-                      <span className="font-bold text-emerald-700">0 Days (None)</span>
+                      <span className="text-slate-500">Inventory Stockout:</span>
+                      <span className="font-bold font-mono text-emerald-700">0 Days (None)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Net Economic Gain:</span>
-                      <span className="font-bold text-emerald-800">+₹30.52L (64.6x ROI)</span>
+                      <span className="text-slate-500">Net Value Saved:</span>
+                      <span className="font-bold font-mono text-emerald-800">+₹30.52L (64.6x return)</span>
                     </div>
                   </div>
                 </div>
@@ -416,9 +462,9 @@ export default function GuidedDemo() {
                       applyIntervention('OPTION_A');
                       setGuidedStep(4);
                     }}
-                    className="w-full py-3 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs transition-colors cursor-pointer flex items-center justify-center gap-2"
+                    className="w-full py-3.5 px-4 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-sm transition-colors cursor-pointer flex items-center justify-center gap-2"
                   >
-                    <span>APPLY RECOMMENDED INTERVENTION</span>
+                    <span>CHOOSE BEST ACTION (OPTION A)</span>
                     <ArrowRight className="w-3.5 h-3.5" />
                   </button>
                 </div>
@@ -431,26 +477,26 @@ export default function GuidedDemo() {
                     <span className="text-xs font-mono font-bold text-slate-500 uppercase">OPTION B</span>
                     <h3 className="text-lg font-bold text-slate-900 mt-0.5">Supplier Payment Rescheduling</h3>
                     <p className="text-xs text-slate-600 mt-1">
-                      Negotiate 9-day extension with PolyPlast Polymers with 1.5% late fee.
+                      Ask Supplier X for more time to pay. Delays raw materials by 9 days and still leaves a stockout.
                     </p>
                   </div>
 
-                  <div className="space-y-2 py-3 border-y border-slate-100 font-mono text-xs">
+                  <div className="space-y-2.5 py-3 border-y border-slate-100 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Intervention Cost:</span>
-                      <span className="font-bold text-slate-900 text-sm">₹0 Direct</span>
+                      <span className="text-slate-500">Action Cost:</span>
+                      <span className="font-bold font-mono text-slate-900 text-sm">₹0</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">Revenue Protected:</span>
-                      <span className="font-bold text-amber-600 text-sm">₹18.0L (58%)</span>
+                      <span className="font-bold font-mono text-amber-600 text-sm">₹18.0L (Only 58%)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Factory Outage:</span>
-                      <span className="font-bold text-rose-600">5 Days Outage</span>
+                      <span className="text-slate-500">Inventory Stockout:</span>
+                      <span className="font-bold font-mono text-rose-600">5 Days Stockout</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Order SO-4029:</span>
-                      <span className="font-bold text-rose-600">Breached SLA</span>
+                      <span className="text-slate-500">Unprotected Risk:</span>
+                      <span className="font-bold font-mono text-rose-600">₹13.0L still lost</span>
                     </div>
                   </div>
                 </div>
@@ -463,7 +509,7 @@ export default function GuidedDemo() {
                     }}
                     className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
                   >
-                    Simulate Option B (Partial)
+                    Test Option B (Partial Fix)
                   </button>
                 </div>
               </div>
@@ -475,26 +521,26 @@ export default function GuidedDemo() {
                     <span className="text-xs font-mono font-bold text-slate-500 uppercase">OPTION C</span>
                     <h3 className="text-lg font-bold text-slate-900 mt-0.5">Short-Term Invoice Financing</h3>
                     <p className="text-xs text-slate-600 mt-1">
-                      Emergency debt facility against invoices at 15% APR + origination fee.
+                      Borrow short-term credit against the invoice. Protects orders, but costs 2.3x more than Option A.
                     </p>
                   </div>
 
-                  <div className="space-y-2 py-3 border-y border-slate-100 font-mono text-xs">
+                  <div className="space-y-2.5 py-3 border-y border-slate-100 text-xs">
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Intervention Cost:</span>
-                      <span className="font-bold text-rose-600 text-sm">₹1.10L Fee</span>
+                      <span className="text-slate-500">Action Cost:</span>
+                      <span className="font-bold font-mono text-rose-600 text-sm">₹1.10L (Interest + Fee)</span>
                     </div>
                     <div className="flex items-center justify-between">
                       <span className="text-slate-500">Revenue Protected:</span>
-                      <span className="font-bold text-emerald-700 text-sm">₹31.0L (100%)</span>
+                      <span className="font-bold font-mono text-emerald-700 text-sm">₹31.0L (100%)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Factory Outage:</span>
-                      <span className="font-bold text-emerald-700">0 Days (None)</span>
+                      <span className="text-slate-500">Inventory Stockout:</span>
+                      <span className="font-bold font-mono text-emerald-700">0 Days (None)</span>
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-slate-500">Economic Inefficiency:</span>
-                      <span className="font-bold text-slate-600">2.3x more costly</span>
+                      <span className="text-slate-500">Why Not Selected:</span>
+                      <span className="font-bold font-mono text-slate-600">2.3x more expensive</span>
                     </div>
                   </div>
                 </div>
@@ -507,67 +553,99 @@ export default function GuidedDemo() {
                     }}
                     className="w-full py-2.5 px-4 rounded-xl text-xs font-semibold bg-slate-100 hover:bg-slate-200 text-slate-700 border border-slate-200 transition-colors cursor-pointer"
                   >
-                    Simulate Option C (Costly)
+                    Test Option C (Higher Cost)
                   </button>
                 </div>
               </div>
+            </div>
+
+            {/* Expandable "Why? / Details" for Optimization Rule */}
+            <div className="p-4 rounded-xl bg-white border border-slate-200">
+              <button
+                onClick={() => setShowCompareDetails(!showCompareDetails)}
+                className="w-full flex items-center justify-between text-left text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+              >
+                <span className="flex items-center gap-2">
+                  <HelpCircle className="w-4 h-4" />
+                  <span>Why does CashFlow Chain recommend Option A? (View Math &amp; Selection Rule)</span>
+                </span>
+                {showCompareDetails ? <ChevronUp className="w-4 h-4" /> : <ChevronDown className="w-4 h-4" />}
+              </button>
+              {showCompareDetails && (
+                <div className="mt-3 pt-3 border-t border-slate-100 text-xs font-mono text-slate-700 space-y-1.5">
+                  <div><strong>Selection Rule:</strong> <code>Minimize Action Cost(a) subject to Revenue Protected(a) == ₹31.0L (100%)</code></div>
+                  <div>• <strong>Option B</strong> is rejected because it only protects 58% of revenue (leaving ₹13.0L of orders canceled).</div>
+                  <div>• <strong>Option A (₹48,000)</strong> beats <strong>Option C (₹1,10,000)</strong> because both protect 100% of revenue, while Option A saves ₹62,000 in financing costs.</div>
+                </div>
+              )}
             </div>
           </div>
         )}
 
         {/* ============================================================ */}
-        {/* CHAPTER 4: PREVENT (CASCADE FULLY NEUTRALIZED)               */}
+        {/* STEP 4: 04 PREVENT — "Here's the best response."             */}
         {/* ============================================================ */}
         {guidedStep === 4 && (
           <div className="space-y-6 animate-in fade-in duration-200 max-w-5xl mx-auto w-full">
             {/* Header */}
-            <div className="space-y-2 text-center sm:text-left">
-              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200">
-                <CheckCircle2 className="w-3.5 h-3.5" />
-                <span>STAGE 04</span>
-                <span>•</span>
-                <span>COUNTERMEASURE APPLIED</span>
-              </div>
-              <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
-                Watch the cascade neutralize in real time.
-              </h2>
-              <p className="text-base text-slate-600 max-w-2xl">
-                By securing the ₹24.0L inflow on Day 10, cash never dips below the safety buffer. Supplier obligations are met on schedule, eliminating factory stockouts.
-              </p>
-            </div>
-
-            {/* The Before vs After Comparison Card (The Wow Factor) */}
-            <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-emerald-500 via-teal-600 to-emerald-600 text-white shadow-lg space-y-6">
-              <div className="text-center sm:text-left">
-                <span className="text-xs font-bold tracking-widest text-emerald-100 uppercase">
-                  THE MEASURABLE RESULT
-                </span>
-                <div className="text-3xl sm:text-4xl font-black tracking-tight mt-1">
-                  ₹48,000 INTERVENTION PREVENTS ₹31,00,000 OF DOWNSTREAM EXPOSURE
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
+              <div className="space-y-1.5">
+                <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200">
+                  <CheckCircle2 className="w-3.5 h-3.5" />
+                  <span>STEP 04 OF 05 • PREVENT</span>
+                  <span>•</span>
+                  <span>&ldquo;Here&apos;s the best response.&rdquo;</span>
                 </div>
-                <p className="text-emerald-100 text-sm mt-1">
-                  64.6x Return on Capital • 100% of committed sales orders delivered on time.
+                <h2 className="text-3xl sm:text-4xl font-extrabold text-slate-900 tracking-tight">
+                  Choose the best action.
+                </h2>
+                <p className="text-sm sm:text-base text-slate-600 max-w-2xl">
+                  Applying <strong>Option A (Early Payment Incentive)</strong> brings in the ₹24.0L payment on Oct 10—keeping cash healthy, paying Supplier X on time, and protecting all ₹31.0L of customer orders.
                 </p>
               </div>
 
-              {/* Before -> Intervention -> After Strip */}
-              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-2">
+              {activeIntervention !== 'OPTION_A' && (
+                <button
+                  onClick={() => applyIntervention('OPTION_A')}
+                  className="px-4 py-2.5 rounded-xl text-xs font-bold bg-emerald-600 hover:bg-emerald-700 text-white shadow-xs cursor-pointer shrink-0"
+                >
+                  Switch to Recommended Option A
+                </button>
+              )}
+            </div>
+
+            {/* The Before vs Action vs After Comparison Card */}
+            <div className="p-6 sm:p-8 rounded-2xl bg-gradient-to-r from-emerald-600 via-teal-600 to-emerald-600 text-white shadow-lg space-y-6">
+              <div className="text-center sm:text-left">
+                <span className="text-xs font-bold tracking-widest text-emerald-100 uppercase">
+                  RECOMMENDED ACTION APPLIED (OPTION A)
+                </span>
+                <div className="text-2xl sm:text-4xl font-black tracking-tight mt-1">
+                  ₹48,000 ACTION PREVENTS ₹31,00,000 IN LOST ORDERS
+                </div>
+                <p className="text-emerald-100 text-sm mt-1">
+                  Net Value Protected: +₹30.52L (64.6x Return) • 100% of customer orders delivered on time.
+                </p>
+              </div>
+
+              {/* Before -> Best Action -> After Strip */}
+              <div className="grid grid-cols-1 md:grid-cols-3 gap-4 pt-1">
                 <div className="p-4 rounded-xl bg-black/15 border border-white/20 backdrop-blur-sm">
-                  <span className="text-xs font-bold tracking-wider text-rose-200 uppercase block">1. BEFORE INTERVENTION</span>
-                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹31.0L Exposure</div>
-                  <p className="text-xs text-emerald-100 mt-1">12-day shutdown, ₹6.6L cash breach.</p>
+                  <span className="text-xs font-bold tracking-wider text-rose-200 uppercase block">1. WITHOUT ACTION</span>
+                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹31.0L at Risk</div>
+                  <p className="text-xs text-emerald-100 mt-1">Cash drops to ₹6.6L • 12-day stockout.</p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-white/20 border border-white/30 backdrop-blur-sm">
-                  <span className="text-xs font-bold tracking-wider text-white uppercase block">2. APPLIED ACTION</span>
-                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹48K Incentive</div>
-                  <p className="text-xs text-emerald-100 mt-1">2% early settlement discount to ABC.</p>
+                  <span className="text-xs font-bold tracking-wider text-white uppercase block">2. BEST ACTION (OPTION A)</span>
+                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹48,000 Cost</div>
+                  <p className="text-xs text-emerald-100 mt-1">2% early-payment discount to {focalCustomer}.</p>
                 </div>
 
                 <div className="p-4 rounded-xl bg-black/15 border border-white/20 backdrop-blur-sm">
-                  <span className="text-xs font-bold tracking-wider text-emerald-200 uppercase block">3. AFTER INTERVENTION</span>
-                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹0.0L Exposure</div>
-                  <p className="text-xs text-emerald-100 mt-1">0-day outage, ₹18.2L minimum cash floor.</p>
+                  <span className="text-xs font-bold tracking-wider text-emerald-200 uppercase block">3. AFTER ACTION</span>
+                  <div className="text-2xl font-bold font-mono mt-1 text-white">₹31.0L Protected</div>
+                  <p className="text-xs text-emerald-100 mt-1">0-day outage • Cash stays above ₹20.7L.</p>
                 </div>
               </div>
             </div>
@@ -575,10 +653,10 @@ export default function GuidedDemo() {
             {/* Embedded Live React Flow in Green/Healthy State */}
             <div className="space-y-2">
               <div className="flex items-center justify-between text-xs text-slate-600 px-1">
-                <span className="font-bold text-slate-900 uppercase">Live Dependency Chain Status:</span>
-                <span className="text-emerald-600 font-semibold font-mono">ALL 6 HOPS SECURED (HEALTHY)</span>
+                <span className="font-bold text-slate-900 uppercase">All 6 Steps in the Chain Now Protected:</span>
+                <span className="text-emerald-700 font-bold font-mono">STATUS: HEALTHY (100% PROTECTED)</span>
               </div>
-              <div className="relative w-full h-[360px] min-h-[360px] rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+              <div className="relative w-full h-[350px] min-h-[350px] rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
                 <ReactFlow
                   nodes={nodes}
                   edges={edges}
@@ -595,35 +673,51 @@ export default function GuidedDemo() {
               </div>
             </div>
 
-            {/* Advance to Verdict */}
-            <div className="flex justify-end pt-2">
+            {/* Expandable Details + Next Button */}
+            <div className="flex flex-col sm:flex-row items-center justify-between gap-4 pt-2">
+              <button
+                onClick={() => setShowPreventDetails(!showPreventDetails)}
+                className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-600 hover:text-blue-800 cursor-pointer"
+              >
+                <HelpCircle className="w-4 h-4" />
+                <span>{showPreventDetails ? 'Hide Ledger Proof' : 'Why? / View Cash Buffer Recovery Numbers'}</span>
+              </button>
+
               <button
                 onClick={() => setGuidedStep(5)}
-                className="inline-flex items-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all cursor-pointer"
+                className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-8 py-3.5 rounded-xl text-sm font-bold bg-blue-600 hover:bg-blue-700 text-white shadow-sm transition-all cursor-pointer"
               >
-                <span>VIEW EXECUTIVE VERDICT</span>
+                <span>05 VERDICT: SEE FINAL OUTCOME</span>
                 <ArrowRight className="w-4 h-4" />
               </button>
             </div>
+
+            {showPreventDetails && (
+              <div className="p-4 rounded-xl bg-white border border-slate-200 text-xs font-mono text-slate-700 space-y-1">
+                <div>• <strong>Unmitigated Lowest Cash:</strong> ₹6.6L on Oct 14 (Breaches ₹15.0L safety floor by ₹8.4L).</div>
+                <div>• <strong>With Option A (Early Payment Discount):</strong> ₹23.52L arrives on Oct 10 (₹24.0L minus ₹48K discount).</div>
+                <div>• <strong>New Lowest Projected Cash:</strong> ₹20.72L on Oct 30 — safely above the ₹15.0L floor every single day.</div>
+              </div>
+            )}
           </div>
         )}
 
         {/* ============================================================ */}
-        {/* CHAPTER 5: VERDICT (EXECUTIVE SUMMARY & PLATFORM ACCESS)     */}
+        {/* STEP 5: 05 VERDICT — "Here's the outcome."                   */}
         {/* ============================================================ */}
         {guidedStep === 5 && (
           <div className="space-y-8 animate-in fade-in duration-200 max-w-4xl mx-auto w-full my-auto py-4">
             {/* Header */}
             <div className="text-center space-y-3">
-              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-semibold border border-emerald-200 shadow-xs">
+              <div className="inline-flex items-center gap-2 px-3.5 py-1.5 rounded-full bg-emerald-50 text-emerald-700 text-xs font-bold border border-emerald-200 shadow-xs">
                 <CheckCircle2 className="w-4 h-4 text-emerald-600" />
-                <span>EXECUTIVE VERDICT • DECISION COMPLETED</span>
+                <span>STEP 05 OF 05 • VERDICT • &ldquo;Here&apos;s the outcome.&rdquo;</span>
               </div>
-              <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight">
-                Prevent the cascade. Don&apos;t just report it.
+              <h2 className="text-3xl sm:text-5xl font-extrabold text-slate-900 tracking-tight leading-tight">
+                CashFlow Chain helps businesses see what could break next — and act before the damage spreads.
               </h2>
               <p className="text-base sm:text-lg text-slate-600 max-w-2xl mx-auto">
-                CashFlow Chain doesn&apos;t just tell finance teams that cash is at risk. It shows them what the risk will break — and what it will cost to stop it.
+                Instead of finding out after a payment is missed and suppliers freeze orders, finance teams get early warning and the lowest-cost fix.
               </p>
             </div>
 
@@ -631,51 +725,63 @@ export default function GuidedDemo() {
             <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
-                  Intervention Cost
+                  Best Action Cost
                 </span>
                 <div className="text-4xl font-black font-mono text-slate-900 mt-2">
-                  ₹48K
+                  ₹48,000
                 </div>
-                <span className="text-xs text-slate-500 mt-1 block">2% Early Settlement Discount</span>
+                <span className="text-xs text-slate-500 mt-1 block">2% Early Payment Discount</span>
               </div>
 
               <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
-                  Exposure Protected
+                  Revenue Protected
                 </span>
                 <div className="text-4xl font-black font-mono text-emerald-600 mt-2">
-                  ₹31L
+                  ₹31.0L
                 </div>
-                <span className="text-xs text-slate-500 mt-1 block">Committed Order Revenue</span>
+                <span className="text-xs text-slate-500 mt-1 block">Customer Orders Delivered On Time</span>
               </div>
 
               <div className="p-6 rounded-2xl bg-white border border-slate-200 shadow-sm text-center">
                 <span className="text-xs font-semibold text-slate-500 uppercase tracking-wider block">
-                  Cascade Protection
+                  Orders Protected
                 </span>
                 <div className="text-4xl font-black font-mono text-blue-600 mt-2">
                   100%
                 </div>
-                <span className="text-xs text-slate-500 mt-1 block">0 Days Factory Outage</span>
+                <span className="text-xs text-slate-500 mt-1 block">+₹30.52L Net Value (64.6x ROI)</span>
               </div>
             </div>
 
-            {/* Loop Summary Banner */}
-            <div className="p-5 rounded-2xl bg-slate-900 text-white flex flex-col sm:flex-row items-center justify-between gap-4 shadow-sm">
-              <div className="flex items-center gap-3">
-                <div className="w-10 h-10 rounded-xl bg-blue-500/20 text-blue-400 border border-blue-500/30 flex items-center justify-center font-bold">
-                  ✓
+            {/* 5-Part Story Summary Strip */}
+            <div className="p-5 rounded-2xl bg-slate-900 text-white space-y-3 shadow-sm">
+              <div className="flex items-center justify-between text-xs font-mono text-blue-400 uppercase tracking-wider">
+                <span>The Complete Story in One View</span>
+                <span className="text-emerald-400 font-bold">✓ Problem Prevented</span>
+              </div>
+              <div className="grid grid-cols-1 sm:grid-cols-5 gap-2 text-xs">
+                <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-blue-400 font-bold block">01 Predict</span>
+                  <span className="text-slate-300">&ldquo;Something might go wrong.&rdquo;</span>
                 </div>
-                <div>
-                  <h4 className="text-sm font-bold">The Complete Second-Order Loop</h4>
-                  <p className="text-xs text-slate-300 font-mono">
-                    PREDICT → TRACE → SIMULATE → PREVENT
-                  </p>
+                <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-amber-400 font-bold block">02 Trace</span>
+                  <span className="text-slate-300">&ldquo;Here&apos;s what it could break.&rdquo;</span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-blue-300 font-bold block">03 Compare</span>
+                  <span className="text-slate-300">&ldquo;Here are the options.&rdquo;</span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-white/5 border border-white/10">
+                  <span className="text-emerald-400 font-bold block">04 Prevent</span>
+                  <span className="text-slate-300">&ldquo;Here&apos;s the best response.&rdquo;</span>
+                </div>
+                <div className="p-2.5 rounded-lg bg-emerald-500/20 border border-emerald-500/40">
+                  <span className="text-emerald-300 font-bold block">05 Verdict</span>
+                  <span className="text-white font-semibold">&ldquo;Here&apos;s the outcome.&rdquo;</span>
                 </div>
               </div>
-              <span className="text-xs font-mono text-emerald-400 bg-emerald-500/10 px-3 py-1 rounded border border-emerald-500/30 font-semibold">
-                64.6x Net Economic Value (₹30.52L Saved)
-              </span>
             </div>
 
             {/* Final Action Buttons */}
@@ -685,7 +791,7 @@ export default function GuidedDemo() {
                 className="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-6 py-3.5 rounded-xl text-sm font-semibold text-slate-700 bg-white hover:bg-slate-50 border border-slate-300 shadow-xs transition-colors cursor-pointer"
               >
                 <RotateCcw className="w-4 h-4" />
-                <span>RESTART DEMO</span>
+                <span>RESTART GUIDED DEMO</span>
               </button>
 
               <button
@@ -698,6 +804,40 @@ export default function GuidedDemo() {
             </div>
           </div>
         )}
+
+        {/* 3. BOTTOM PERSISTENT STEP NAVIGATION FOOTER */}
+        <footer className="mt-8 pt-4 border-t border-slate-200 flex items-center justify-between text-xs text-slate-500">
+          <button
+            onClick={prevGuidedStep}
+            disabled={guidedStep === 1}
+            className="inline-flex items-center gap-1.5 px-4 py-2 rounded-lg font-bold text-slate-700 bg-white hover:bg-slate-100 border border-slate-300 disabled:opacity-35 disabled:pointer-events-none cursor-pointer shadow-2xs"
+          >
+            <ArrowLeft className="w-3.5 h-3.5" />
+            <span>Previous Step</span>
+          </button>
+
+          <span className="font-mono font-semibold text-slate-600">
+            Guided Demo • Step {guidedStep} of 5 ({currentStageObj.title})
+          </span>
+
+          {guidedStep < 5 ? (
+            <button
+              onClick={nextGuidedStep}
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg font-bold text-white bg-blue-600 hover:bg-blue-700 cursor-pointer shadow-xs"
+            >
+              <span>Next Step</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          ) : (
+            <button
+              onClick={() => exitGuidedDemo(SCREENS.COMMAND_CENTER)}
+              className="inline-flex items-center gap-1.5 px-5 py-2 rounded-lg font-bold text-white bg-slate-900 hover:bg-slate-800 cursor-pointer shadow-xs"
+            >
+              <span>Explore Full Platform</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
+          )}
+        </footer>
       </main>
     </div>
   );
