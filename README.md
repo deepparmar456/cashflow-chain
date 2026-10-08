@@ -1,8 +1,7 @@
 # CASHFLOW CHAIN
 ### AI-Assisted Financial Early-Warning & Second-Order Intervention System for SMEs
 
-> **The Core SME Question:** *"If one important customer pays late, what does that break next?"*  
-> **The Core Engine Loop:** **PREDICT** $\rightarrow$ **TRACE** $\rightarrow$ **SIMULATE** $\rightarrow$ **PREVENT**
+> **The Core SME Question:** *"If one important customer pays late, what does that break next?"
 
 ---
 
